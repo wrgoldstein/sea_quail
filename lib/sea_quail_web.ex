@@ -41,6 +41,7 @@ defmodule SeaQuailWeb do
 
       import SeaQuailWeb.ErrorHelpers
       import SeaQuailWeb.Gettext
+      import Guardian.Plug, only: [authenticated?: 2, current_resource: 1]
       alias SeaQuailWeb.Router.Helpers, as: Routes
     end
   end

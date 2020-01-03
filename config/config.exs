@@ -25,6 +25,11 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :sea_quail, SeaQuailWeb.Guardian,
+  issuer: "cookie",
+  secret_key: System.get_env("HMAC_SECRET"),
+  ttl: {30, :days}
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

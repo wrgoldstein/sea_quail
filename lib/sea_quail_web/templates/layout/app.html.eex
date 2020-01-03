@@ -7,6 +7,19 @@
     <title>SeaQuail · Phoenix Framework</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
+  <header>
+    <ul class="nav nav-pills pull-right">
+    <%= if authenticated?(@conn, []) do %>
+      <li><a href='/'><%= current_resource(@conn).email %> </a> </li>
+      <li><%= link "Design", to: "/designs" %></li>
+      <li><%= link "Connection", to: "/connection/edit" %></li>
+      <li><%= link "Logout", to: Routes.session_path(@conn, :logout), method: :delete %></li>
+    <% else %>
+      <li><%= link "Login",    to: "/login" %></li>
+      <li><%= link "Register", to: Routes.user_path(@conn, :new) %></li>
+    <% end %>
+  </ul>
+  </header>
   <body>
     <main>
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
