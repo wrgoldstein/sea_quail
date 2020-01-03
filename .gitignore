@@ -1,0 +1,17 @@
+# App artifacts
+/_build
+/db
+/deps
+/*.ez
+priv/static/js/*
+priv/static/css/*
+
+# Local files
+.vscode
+.env
+
+erl_crash.dump
+/config/*.secret.exs
+
+/assets/node_modules
+.elixir_ls/

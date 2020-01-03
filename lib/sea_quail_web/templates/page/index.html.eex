@@ -1,0 +1,14 @@
+<script type="module">
+  import { App }from '<%= Routes.static_path(@conn, "/js/index.js") %>'
+
+  const app = new App({
+    target: document.querySelector('#App'),
+    props: {
+        name: 'world'
+    }
+  })
+  // TODO fix this
+  window.csrfToken = '<%= Plug.CSRFProtection.get_csrf_token() %>'
+</script> 
+
+<div id="App"></div>
