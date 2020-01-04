@@ -1,12 +1,12 @@
 <script>
     import Codemirror from "./codemirror/Codemirror.html"
 
-	let text, result
+	let text, result, data
 	let loading = false
 
-	function sendText(){
+	function run_query(){
 		loading = true
-		fetch('/run', {
+		fetch('/api/run', {
             method: 'POST',
             headers: {
 				'Accept': 'application/json',
@@ -17,7 +17,7 @@
         })
         .then(resp => resp.json())
         .then(s => {
-			result = s.result
+			console.log(s)
 		})
 		.then( _ => loading = false)
 	}
@@ -28,4 +28,5 @@
 </script>
 
 <h1>Hello world!</h1>
-<Codemirror mode="python" on_change={on_change} submit_f={sendText}></Codemirror>
+<Codemirror mode="python" on_change={on_change} submit_f={run_query}></Codemirror>
+<a on:click={run_query}>Run Query</a>

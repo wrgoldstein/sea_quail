@@ -1,6 +1,7 @@
 defmodule SeaQuail.Pool do
   use Agent
 
+  alias DBConnection.ConnectionPool
   Postgrex.Types.define(SeaQuail.PostgrexTypes, [], json: Jason)
 
   def start_link(connection) do
@@ -9,7 +10,7 @@ defmodule SeaQuail.Pool do
 
   def query(sql) do
     Agent.get(__MODULE__, fn pid ->
-      Postgrex.query(pid, sql, [], pool: DBConnection.Poolboy)
+      Postgrex.query(pid, sql, [], pool: ConnectionPool)
     end)
   end
   
@@ -19,7 +20,7 @@ defmodule SeaQuail.Pool do
 
   def connect(connection) do
     params = %{
-      pool: DBConnection.Poolboy,
+      pool: ConnectionPool,
       name: :"#{__MODULE__}_Poolboy",
       pool_size: 8,
       hostname: connection.hostname,

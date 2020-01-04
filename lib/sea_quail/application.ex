@@ -11,9 +11,10 @@ defmodule SeaQuail.Application do
       # Start the Ecto repository
       SeaQuail.Repo,
       # Start the endpoint when the application starts
-      SeaQuailWeb.Endpoint
+      SeaQuailWeb.Endpoint,
       # Starts a worker by calling: SeaQuail.Worker.start_link(arg)
       # {SeaQuail.Worker, arg},
+      {SeaQuail.Pool.Registry, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

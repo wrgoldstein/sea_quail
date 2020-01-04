@@ -1,6 +1,8 @@
 defmodule SeaQuail.Pool.Registry do
   use GenServer
 
+  alias DBConnection.ConnectionPool
+
   def start_link(_ignore \\ nil) do
     GenServer.start_link(__MODULE__, %{}, name: PoolRegistry)
   end
@@ -55,8 +57,8 @@ defmodule SeaQuail.Pool.Registry do
     Agent.get(pid, fn pool ->
       try do
         with \
-          {:ok, query} <- Postgrex.prepare(pool, "unnamed", sql, pool: DBConnection.Poolboy, timeout: 1500),
-          {:ok, result} <- Postgrex.execute(pool, query, [], pool: DBConnection.Poolboy)
+          {:ok, query} <- Postgrex.prepare(pool, "unnamed", sql, pool: ConnectionPool, timeout: 1500),
+          {:ok, result} <- Postgrex.execute(pool, query, [], pool: ConnectionPool)
           do
             %{ query: query, result: result}
           else

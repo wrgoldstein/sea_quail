@@ -20,6 +20,7 @@ defmodule SeaQuailWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
     plug(Guardian.Plug.Pipeline,
       module: SeaQuailWeb.Guardian,
       error_handler: SeaQuailWeb.AuthErrorHandler
