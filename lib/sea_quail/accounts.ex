@@ -6,7 +6,7 @@ defmodule SeaQuail.Accounts do
   import Ecto.Query, warn: false
   alias SeaQuail.Repo
 
-  alias SeaQuail.Accounts.User
+  alias SeaQuail.Accounts.{User, Connection}
   alias Comeonin.Bcrypt
 
   @doc """
@@ -118,5 +118,30 @@ defmodule SeaQuail.Accounts do
       true -> {:ok, user}
       false -> {:error, "Incorrect email or password"}
     end
+  end
+
+  def get_connection_for!(session_connection_id) do
+    # TODO: Replace user_id with organization_id
+    Repo.get_by(Connection, user_id: session_connection_id)
+  end
+
+  def change_connection(%Connection{} = connection) do
+    Connection.changeset(connection, %{})
+  end
+
+  def update_connection(%Connection{} = connection, _user, attrs) do
+    connection
+    |> Connection.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_connection(%Connection{} = connection) do
+    Repo.delete(connection)
+  end
+
+  def create_connection(attrs) do
+    %Connection{}
+    |> Connection.changeset(attrs)
+    |> Repo.insert()
   end
 end
