@@ -1,0 +1,39 @@
+<script>
+    import CodeMirror from "codemirror";
+    import './codemirror.css';
+    import 'codemirror/lib/codemirror.css';
+    import 'codemirror/mode/sql/sql.js';
+    import 'codemirror/theme/idea.css'; 
+    import key from "keymaster";
+    import _ from "lodash"
+    
+    import { onMount } from 'svelte'
+    
+    export let mode, on_change, submit_f
+    let textarea, editor
+
+    
+    onMount(() => {
+        editor = CodeMirror.fromTextArea(textarea, {
+            mode: 'sql',
+            theme: 'idea',
+            lineNumbers: false
+        });
+
+        editor.on("change", on_change)
+        const map = { "Ctrl-Enter": submit_f }
+        editor.addKeyMap(map);
+    });
+    
+</script>
+
+<style>
+    #root {
+        height: auto;
+        border: 1px solid black;
+    }
+</style>
+
+<div id="root">
+    <textarea bind:this={textarea}></textarea>
+</div>

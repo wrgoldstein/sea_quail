@@ -1,1 +1,31 @@
-<h1>Hello</h1>
+<script>
+    import Codemirror from "./codemirror/Codemirror.html"
+
+	let text, result
+	let loading = false
+
+	function sendText(){
+		loading = true
+		fetch('/run', {
+            method: 'POST',
+            headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'x-csrf-token': window.csrfToken
+			},
+            body: JSON.stringify({ text })
+        })
+        .then(resp => resp.json())
+        .then(s => {
+			result = s.result
+		})
+		.then( _ => loading = false)
+	}
+
+	function on_change(cm){
+		text = cm.getValue()
+	}
+</script>
+
+<h1>Hello world!</h1>
+<Codemirror mode="python" on_change={on_change} submit_f={sendText}></Codemirror>
