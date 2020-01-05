@@ -36,6 +36,17 @@ export const raw_data = {
     ]
 }
 
+export function chartData(data){
+  if (data.rows.length <= 1) {
+      return
+  } else if (data.number_columns.length < 1) {
+      return
+  } else if (data.non_number_columns.length > 2){
+      return
+  }
+  return data
+}
+
 export class ChartConfig {
   constructor(data) {
     this.data = data;

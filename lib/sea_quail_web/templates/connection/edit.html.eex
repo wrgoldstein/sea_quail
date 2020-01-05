@@ -11,8 +11,10 @@
   })
 */
 </script>
+<h2> <%= @user.email %> </h2>
+<span><%= link "Logout", to: Routes.session_path(@conn, :logout), method: :delete, class: "btn btn-4"%></span>
 
-<h2>Edit Connection</h2>
+<h3>Edit Connection</h2>
 <div id="App"></div>
 
 <div class="container">

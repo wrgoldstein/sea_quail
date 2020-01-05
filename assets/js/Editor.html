@@ -1,13 +1,13 @@
 <script>
 	import Codemirror from "./codemirror/Codemirror.html"
-    import Chart from "./Chart.html"
+	import Chart from "./Chart.html"
+	import { chartData } from "./chartConfig.js"
     import Table from "./Table.html"
 
 	export let authenticated, user_email
 
-	let text, result, data, error
+	let text, result, data, error, chart_data
 	let loading = false
-
     let chart_key = 0
     let table_key = 0
   	let chart;
@@ -29,8 +29,8 @@
 				error = s.error
 			} else {
 				error = undefined
-				console.log(s)
-                data = s
+				data = s
+				chart_data = chartData(s)
                 table_key++
 				chart_key++
 			}
@@ -49,7 +49,17 @@
 }
 
 .table-container {
-    max-width: 50vw;
+	max-width: 50vw;
+	overflow-y: scroll;
+	overflow-x: scroll;
+}
+
+.table-sm {
+	max-height: 43vh;
+}
+
+.table-lg {
+	max-height: 85vh;
 }
 
 .left-half {
@@ -68,7 +78,8 @@
 	display: inherit;
 	align-items: center;
     direction: rtl;
-    flex: 0 0 auto;
+	flex: 0 0 auto;
+	margin-bottom: 1em;
 }
 </style>
 
@@ -92,14 +103,16 @@
 				{error}
 			</div>
 		{/if}
-		{#if data}
+		{#if chart_data}
 			{#each [chart_key] as k (k)}
 				<div class="chart-container">
-					<Chart bind:this={chart} data={data} width="80%" height="40%"/>
+					<Chart bind:this={chart} data={chart_data} width="80%" height="40%"/>
 				</div>
-            {/each}
+			{/each}
+		{/if}
+		{#if data}
             {#each [table_key] as k (k)}
-                <div class="table-container">
+                <div class="table-container {chart_data ? 'table-sm' : 'table-lg'}">
                     <Table data={data} />
                 </div>
             {/each}
