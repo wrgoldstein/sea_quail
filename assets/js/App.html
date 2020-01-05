@@ -1,5 +1,6 @@
 <script>
-    import Codemirror from "./codemirror/Codemirror.html"
+	import "../css/app.css"
+	import Codemirror from "./codemirror/Codemirror.html"
 
 	let text, result, data
 	let loading = false
@@ -27,6 +28,47 @@
 	}
 </script>
 
-<h1>Hello world!</h1>
-<Codemirror mode="python" on_change={on_change} submit_f={run_query}></Codemirror>
-<a on:click={run_query}>Run Query</a>
+<style>
+.left-half {
+	background-color:var(--main-bg-color);
+	width: 50vw;
+	min-width: 700px;
+	height: 100vh;
+	padding: 20px;
+}
+
+.btn {
+	padding: 5px 10px 5px 10px;
+	border-radius: 10px;
+	margin: 5px;
+}
+
+.btn-2 {
+	background-color: var(--accent2);
+}
+
+.btn-3 {
+	background-color: var(--accent3);
+}
+
+.run-btn:hover {
+	cursor: pointer;
+}
+
+.top-bar {
+	height: 36px;
+	display: inherit;
+	align-items: center;
+	direction: rtl;
+}
+</style>
+
+<div class="left-half">
+	<div class="top-bar">
+		<a class="btn btn-2" on:click={run_query}>Format</a>
+		<a class="btn btn-3" on:click={run_query}>Execute</a>
+	</div>
+	<Codemirror mode="python" on_change={on_change} submit_f={run_query}></Codemirror>
+</div>
+
+

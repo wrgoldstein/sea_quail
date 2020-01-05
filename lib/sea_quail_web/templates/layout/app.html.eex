@@ -6,23 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>SeaQuail · Phoenix Framework</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/svelte.css") %>"/>
   </head>
-  <header>
-    <ul class="nav nav-pills pull-right">
-    <%= if authenticated?(@conn, []) do %>
-      <li><a href='/'><%= current_resource(@conn).email %> </a> </li>
-      <li><%= link "Connection", to: "/connection/edit" %></li>
-      <li><%= link "Logout", to: Routes.session_path(@conn, :logout), method: :delete %></li>
-    <% else %>
-      <li><%= link "Login",    to: "/login" %></li>
-      <li><%= link "Register", to: Routes.user_path(@conn, :new) %></li>
-    <% end %>
-  </ul>
-  </header>
   <body>
     <main>
-      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+      <section class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></section>
+      <section class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></section>
       <%= render @view_module, @view_template, assigns %>
     </main>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>

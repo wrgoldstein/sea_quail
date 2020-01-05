@@ -3,7 +3,7 @@
     import './codemirror.css';
     import 'codemirror/lib/codemirror.css';
     import 'codemirror/mode/sql/sql.js';
-    import 'codemirror/theme/idea.css'; 
+    import 'codemirror/theme/material.css'; 
     import key from "keymaster";
     import _ from "lodash"
     
@@ -16,8 +16,9 @@
     onMount(() => {
         editor = CodeMirror.fromTextArea(textarea, {
             mode: 'sql',
-            theme: 'idea',
-            lineNumbers: false
+            theme: 'material',
+            lineNumbers: false,
+            scrollbarStyle: "null"
         });
 
         editor.on("change", on_change)
@@ -29,11 +30,14 @@
 
 <style>
     #root {
-        height: auto;
-        border: 1px solid black;
+        height: inherit;
+    }
+
+    .textarea {
+        height: 100vh;
     }
 </style>
 
 <div id="root">
-    <textarea bind:this={textarea}></textarea>
+    <textarea class="textarea" bind:this={textarea}></textarea>
 </div>

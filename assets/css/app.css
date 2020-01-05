@@ -1,5 +1,25 @@
 /* This file is for your main application css. */
 
+:root {
+    --main-bg-color: #263238;
+    --main-fg-color: #FCDEBE;
+    --accent1: #EBA6A9;
+    --accent2: #FFC6AC;
+    --accent3: #C792EA;
+}
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Roboto|Roboto+Mono&display=swap');
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    color: var(--main-bg-color);
+    margin: 0;
+}
+
+html {
+    margin: 0;
+}
+
 table {
     border-collapse: collapse;
     min-width: 30vw;
@@ -17,4 +37,27 @@ td, th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
+}
+
+.CodeMirror {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 20px;
+}
+
+.cm-keyword { 
+    text-transform: uppercase;
+}
+
+.btn {
+    background-color: var(--accent1)
+}
+
+header {
+    position: fixed;
+    color: white;
+    right: 0px;
+}
+
+h1 {
+    margin: 0;
 }

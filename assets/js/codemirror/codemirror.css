@@ -1,4 +1,13 @@
 .CodeMirror {
-    border: 1px solid #eee;
-    height: auto;
+    height: 100% !important;
+    min-width: 700px;
+}
+
+.CodeMirror-scroll {
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.CodeMirror-lines {
+    padding-left: 20px;
 }
