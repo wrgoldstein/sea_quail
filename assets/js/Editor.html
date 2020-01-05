@@ -2,7 +2,9 @@
 	import Codemirror from "./codemirror/Codemirror.html"
 	import Chart from "./Chart.html"
 	import { chartData } from "./chartConfig.js"
-    import Table from "./Table.html"
+	import Table from "./Table.html"
+	import SaveQueryModal from "./SaveQueryModal.html"
+	import key from "keymaster";
 
 	export let authenticated, user_email
 
@@ -10,7 +12,12 @@
 	let loading = false
     let chart_key = 0
     let table_key = 0
-  	let chart;
+	let chart;
+	  
+	let save_modal_open
+	function toggleSaveModal(){
+		save_modal_open = !save_modal_open
+	}
 
 	function run_query(){
 		loading = true
@@ -41,6 +48,11 @@
 	function on_change(cm){
 		text = cm.getValue()
 	}
+
+	key("escape", () => {
+		// TODO fix this
+		if (save_modal_open) toggleSaveModal()
+	})
 </script>
 
 <style>
@@ -86,11 +98,14 @@
 <div class="container">
 	<div class="half left-half">
 		<div class="top-bar">
+			{#if save_modal_open}
+				<SaveQueryModal close={toggleSaveModal} body={text}/>
+			{/if}
 			<a class="btn btn-2" on:click={run_query}>Format</a>
             <a class="btn btn-3" on:click={run_query}>Execute</a>
-            <a class="btn btn-1" on:click={run_query}>Save</a>
+            <a class="btn btn-1" on:click={toggleSaveModal}>Save</a>
 		</div>
-		<Codemirror mode="python" on_change={on_change} submit_f={run_query}></Codemirror>
+		<Codemirror on_change={on_change} submit_f={run_query} save_f={toggleSaveModal}/>
 	</div>
 	<div class="half">
 		<div class="top-bar">

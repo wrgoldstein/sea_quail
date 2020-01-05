@@ -1,0 +1,56 @@
+<script>
+    import Modal from "./Modal.html"
+    import key from "keymaster";
+
+    export let close, body
+
+    let name, error
+
+    let fields = ["name", "body"]
+
+    function submit(){
+		return fetch('/queries', {
+            method: 'POST',
+            headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'x-csrf-token': window.csrfToken
+			},
+            body: JSON.stringify({ name, body })
+        })
+        .then(resp => resp.json())
+        .then(s => {
+			if ("error" in s){
+				error = s.error
+			} else {
+                error = undefined
+                close()
+			}
+		})
+    }
+
+    key('return', submit)
+</script>
+<style>
+    .ivory {
+        color: ivory
+    }
+</style>
+<Modal close={close}>
+    <h3 class="ivory">Save query:</h3>
+    {#if error}
+        <div class="alert alert-danger">
+            <ul>
+                {#each fields as field}
+                    {#if error[field].length}
+                        <li> Query {field} {error[field].join(", ") }</li>
+                    {/if}
+                {/each}
+            </ul>
+        </div>
+    {/if}
+    <label class="ivory">Name</label>
+
+    <input bind:value={name}>
+    <a on:click={submit} class="btn btn-3">Save</a>
+</Modal>
