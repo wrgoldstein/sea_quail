@@ -1,41 +1,6 @@
 import _ from "lodash"
 import { color } from "d3-color"
 
-export const raw_data = {
-    "rows": [
-        [
-            "South",
-            1620
-        ],
-        [
-            "West",
-            3203
-        ],
-        [
-            "East",
-            2848
-        ],
-        [
-            "Central",
-            2323
-        ]
-    ],
-    "result_types": [
-        "string",
-        "number"
-    ],
-    "number_columns": [
-        "orders.count"
-    ],
-    "non_number_columns": [
-        "orders.region"
-    ],
-    "columns": [
-        "orders.region",
-        "orders.count"
-    ]
-}
-
 export function chartData(data){
   if (data.rows.length <= 1) {
       return
@@ -80,7 +45,7 @@ export class ChartConfig {
   }
 
   config(type){
-    return {
+    let ret = {
       type,
       data: {
         labels: this.makeLabels(),
@@ -88,21 +53,19 @@ export class ChartConfig {
       },
       options: this.makeOptions(type)
     }
+    console.log(ret)
+    return ret
   }
 
   makeLabels(){
-    const nnc = this.data.non_number_columns
-    const c = this.data.columns
-
-    // first non number column will be our label for now
-    const j = c.indexOf(nnc[0])
-
-    return this.data.rows.map(row => row[j])
+    const nn_columns = this.data.non_number_columns
+    // get column indices for non numeric columns
+    const ixs = nn_columns.map(i => this.data.columns.indexOf(i))
+    return this.data.rows.map( row => ixs.map(j => row[j]).join("-") )
   }
 
   // Method
   makeDatasets(type){
-    console.log(this.data.number_columns)
     return this.data.number_columns.map((label, i) => {
         let j = this.data.columns.indexOf(label)
         let values = this.data.rows.map(row => row[j])

@@ -1,9 +1,11 @@
 <script>
     import CodeMirror from "codemirror";
+    import sqlFormatter from "sql-formatter";
     import './codemirror.css';
     import 'codemirror/lib/codemirror.css';
     import 'codemirror/mode/sql/sql.js';
     import 'codemirror/theme/material.css'; 
+    import 'codemirror/addon/comment/comment.js';
     import key from "keymaster";
     import _ from "lodash"
     
@@ -12,6 +14,10 @@
     export let mode, on_change, submit_f
     let textarea, editor
 
+    export function formatSQL(){
+        let val = editor.getValue()
+        editor.setValue(sqlFormatter.format(val))
+    }
     
     onMount(() => {
         editor = CodeMirror.fromTextArea(textarea, {
@@ -22,7 +28,13 @@
         });
 
         editor.on("change", on_change)
-        const map = { "Ctrl-Enter": submit_f }
+        const map = { 
+            "Ctrl-Enter": submit_f,
+            "Ctrl-R": (cm) => {
+                let val = cm.getValue()
+                cm.setValue(sqlFormatter.format(val))
+            }
+        }
         editor.addKeyMap(map);
     });
     

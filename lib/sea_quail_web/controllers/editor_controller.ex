@@ -7,7 +7,8 @@ defmodule SeaQuailWeb.EditorController do
     Postgrex.Extensions.Raw => "string",
     Postgrex.Extensions.Date => "date",
     Postgrex.Extensions.Timestamp => "date",
-    Postgrex.Extensions.Int8 => "number"
+    Postgrex.Extensions.Int8 => "number",
+    Postgrex.Extensions.Float8 => "number"
   }
 
   def run(conn, params) do
