@@ -1,0 +1,30 @@
+<script>
+    import { onMount } from 'svelte'
+    import JSONFormatter from 'json-formatter-js'
+
+    export let value
+    let rendered, cell
+
+    function render(value){
+        if (typeof(value) == 'object'){
+            const formatter = new JSONFormatter(value, 0)
+            cell.appendChild(formatter.render())
+            return ''
+        }
+        return value
+    }
+    onMount(_ => {
+        rendered = render(value)
+    })
+</script>
+
+<style>
+    td {
+        padding: 5px;
+    }
+</style>
+
+<!-- Begin component -->
+<td bind:this={cell}>
+    {rendered}
+</td>

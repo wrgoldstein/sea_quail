@@ -1,13 +1,15 @@
 <script>
 	import Codemirror from "./codemirror/Codemirror.html"
-	import Chart from "./Chart.html"
+    import Chart from "./Chart.html"
+    import Table from "./Table.html"
 
 	export let authenticated, user_email
 
 	let text, result, data, error
 	let loading = false
 
-	let chart_key = 0
+    let chart_key = 0
+    let table_key = 0
   	let chart;
 
 	function run_query(){
@@ -28,7 +30,8 @@
 			} else {
 				error = undefined
 				console.log(s)
-				data = s
+                data = s
+                table_key++
 				chart_key++
 			}
 		})
@@ -43,6 +46,10 @@
 <style>
 .container {
 	display: flex;
+}
+
+.table-container {
+    max-width: 50vw;
 }
 
 .left-half {
@@ -90,7 +97,12 @@
 				<div class="chart-container">
 					<Chart bind:this={chart} data={data} width="80%" height="40%"/>
 				</div>
-			{/each}
+            {/each}
+            {#each [table_key] as k (k)}
+                <div class="table-container">
+                    <Table data={data} />
+                </div>
+            {/each}
 		{/if}
 	</div>
 </div>

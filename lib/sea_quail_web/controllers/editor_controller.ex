@@ -14,6 +14,23 @@ defmodule SeaQuailWeb.EditorController do
     user = current_resource(conn)
     query = params["text"]
 
+    # hack to ensure limit is included
+    
+    if check_limit(query) do
+      handle_query(conn, user, query)
+    else
+      conn
+            |> put_status(500)
+            |> json(%{error: "Must include a LIMIT less than 100"})
+    end
+  end
+
+  def check_limit(query) do
+    capture = Regex.named_captures(~r/limit([[:cntrl:], [:blank:]])+(?<limit>\d+)/im, query)
+    not is_nil(capture) and not is_nil(capture["limit"]) and String.to_integer(capture["limit"]) <= 100
+  end
+
+  def handle_query(conn, user, query) do
     case SeaQuail.Pool.Registry.query(user.id, query) do
       {:ok, query, result} ->
         number_indexes =
