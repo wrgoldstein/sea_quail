@@ -1,0 +1,71 @@
+<script>
+import Chart from "chart.js"
+import { onMount } from 'svelte'
+import { ChartConfig } from "./chartConfig.js"
+
+export let data
+let this_chart, canvas
+let type = 'bar' // default
+
+let height = "200px"
+let width = "400px"
+
+function setTypeBar(){
+    type = 'bar'
+    render()
+}
+
+function setTypeLine(){
+    type = 'line'
+    render()
+}
+
+export function render(new_data){
+    var ctx = canvas
+    if (new_data) data = new_data
+    return new Chart(ctx, config(data))
+}
+
+export function updateChart(new_data){
+    this_chart = render(new_data)
+}
+
+export function config(data){
+    return new ChartConfig(data).config(type)
+}
+
+onMount(() => {
+    canvas.style.height = height
+    canvas.style.width = width
+    this_chart = render(data)
+})
+
+</script>
+<style>
+
+.chart-container {
+    position: relative;
+    margin: auto;
+    padding: 1vw;
+    background-color: #fff;
+    height: 400px;
+    width: 800px;
+}
+
+.controls {
+    position: absolute;
+    flex-direction: column;
+    display: flex;
+    right: 10px;
+    top: 10px;
+}
+
+</style>
+
+<div class="chart-container">
+    <canvas bind:this={canvas}></canvas>
+    <div class='controls'>
+        <!-- <button on:click={setTypeBar}>Bar</button>
+        <button on:click={setTypeLine}>Line</button> -->
+    </div>
+</div>

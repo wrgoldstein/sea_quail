@@ -10,7 +10,7 @@
 
 @import url('https://fonts.googleapis.com/css?family=Open+Sans|Roboto|Roboto+Mono&display=swap');
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto Mono', monospace;
     font-size: 24px;
     color: var(--main-bg-color);
     margin: 0;
@@ -48,16 +48,19 @@ td, th {
     text-transform: uppercase;
 }
 
-.btn {
-    background-color: var(--accent1)
-}
-
 header {
     position: fixed;
     color: white;
     right: 0px;
 }
 
-h1 {
-    margin: 0;
+.help-block {
+    color: #a94442;
+    margin-left: 3em;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
 }

@@ -4,7 +4,8 @@
   const app = new App({
     target: document.querySelector('#App'),
     props: {
-        name: 'world'
+        authenticated: <%= authenticated?(@conn, []) %>,
+        user_email: "<%= (current_resource(@conn) || %{email: nil}).email %>"
     }
   })
   // TODO fix this

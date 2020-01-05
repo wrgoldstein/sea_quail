@@ -1,0 +1,122 @@
+<script>
+	import Codemirror from "./codemirror/Codemirror.html"
+	import Chart from "./Chart.html"
+
+	export let authenticated, user_email
+
+	let text, result, data, error
+	let loading = false
+
+	let chart_key = 0
+  	let chart;
+
+	function run_query(){
+		loading = true
+		fetch('/api/run', {
+            method: 'POST',
+            headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'x-csrf-token': window.csrfToken
+			},
+            body: JSON.stringify({ text })
+        })
+        .then(resp => resp.json())
+        .then(s => {
+			if ("error" in s){
+				error = s.error
+			} else {
+				error = undefined
+				console.log(s)
+				data = s
+				chart_key++
+			}
+		})
+		.then( _ => loading = false)
+	}
+
+	function on_change(cm){
+		text = cm.getValue()
+	}
+</script>
+
+<style>
+.container {
+	display: flex;
+}
+
+.left-half {
+	background-color:var(--main-bg-color);
+	flex-grow: 1;
+}
+
+.half {
+	height: 100vh;
+	padding: 20px;
+	flex-grow: 1;
+}
+
+.btn {
+	padding: 5px 10px 5px 10px;
+	border-radius: 10px;
+	margin: 5px;
+}
+
+.btn-1 {
+	background-color: var(--accent1);
+}
+
+.btn-2 {
+	background-color: var(--accent2);
+}
+
+.btn-3 {
+	background-color: var(--accent3);
+}
+
+.btn-4 {
+	border: 1px solid var(--main-bg-color)
+}
+
+.btn:hover {
+	cursor: pointer;
+}
+
+.top-bar {
+	height: 36px;
+	display: inherit;
+	align-items: center;
+    direction: rtl;
+    flex: 0 0 auto;
+}
+</style>
+
+<div class="container">
+	<div class="half left-half">
+		<div class="top-bar">
+			<a class="btn btn-2" on:click={run_query}>Format</a>
+            <a class="btn btn-3" on:click={run_query}>Execute</a>
+            <a class="btn btn-1" on:click={run_query}>Save</a>
+		</div>
+		<Codemirror mode="python" on_change={on_change} submit_f={run_query}></Codemirror>
+	</div>
+	<div class="half">
+		<div class="top-bar">
+			<a class="btn btn-4">?</a>
+			<a class="btn btn-4">Explore</a>
+			<a class="btn btn-4">Account</a>
+		</div>
+		{#if error}
+			<div class="alert alert-danger">
+				{error}
+			</div>
+		{/if}
+		{#if data}
+			{#each [chart_key] as k (k)}
+				<div class="chart-container">
+					<Chart bind:this={chart} data={data} width="80%" height="40%"/>
+				</div>
+			{/each}
+		{/if}
+	</div>
+</div>
