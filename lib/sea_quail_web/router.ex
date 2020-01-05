@@ -43,6 +43,7 @@ defmodule SeaQuailWeb.Router do
     post("/login", SessionController, :login)
     delete("/logout", SessionController, :logout)
     resources("/users", UserController, except: [:index, :delete, :show])
+    get("/account", ConnectionController, :edit)
     get("/connection/edit", ConnectionController, :edit)
     put("/connection/edit", ConnectionController, :update)
     post("/connection/edit", ConnectionController, :update)

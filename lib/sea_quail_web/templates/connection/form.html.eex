@@ -1,3 +1,32 @@
+<style>
+form {
+    display: flex;
+    flex-wrap: wrap;
+}
+label {
+    margin: 10px;
+}
+input {
+    max-width: 600px;
+}
+
+input, button, submit { border:none; } 
+
+button {
+    font-size: 24px;
+    margin-top: 10px;
+    max-width: 350px;
+    padding: 30px;
+    background-color: white;
+}
+
+.break {
+  flex-basis: 100%;
+  height: 0;
+}
+
+</style>
+
 <%= form_for @changeset, @action, fn f -> %>
     <%= if @changeset.action do %>
         <div class="alert alert-danger">
@@ -9,22 +38,26 @@
     <label>Hostname</label>
     <%= text_input f, :hostname, class: "form-control", value: Map.get(@existing, :hostname) %>
     <%= error_tag(f, :hostname) %>
-
+    <div class="break"></div>
     <label>Database</label>
     <%= text_input f, :database, class: "form-control", value: Map.get(@existing, :database) %>
     <%= error_tag(f, :database) %>
-
+    <div class="break"></div>
     <label>Username</label>
     <%= text_input f, :username, class: "form-control", value: Map.get(@existing, :username) %>
     <%= error_tag(f, :username) %>
-
+    <div class="break"></div>
     <label>Password</label>
     <%= password_input f, :password, class: "form-control", value: Map.get(@existing, :password) %>
     <%= error_tag(f, :password) %>
-
+    <div class="break"></div>
     <label>Port</label>
     <%= text_input f, :port, class: "form-control", value: Map.get(@existing, :port) %>
     <%= error_tag(f, :port) %>
+    <div class="break"></div>
 
-    <%= submit "Submit", class: "btn btn-primary" %>
+    <div class="btn-line">
+        <%= submit "Submit", class: "btn btn-4" %>
+        <a class="btn btn-4" href="/"> Back </a>
+    </div>
 <% end %>

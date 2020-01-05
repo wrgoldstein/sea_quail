@@ -1,4 +1,0 @@
-<h2>Edit Connection</h2>
-<div class="container">
-    <%= render "form.html", Map.put(assigns, :action, Routes.connection_path(@conn, :update)) %>
-</div>

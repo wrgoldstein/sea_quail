@@ -2,7 +2,7 @@
 
 :root {
     --main-bg-color: #263238;
-    --main-fg-color: #FCDEBE;
+    --main-fg-color: #FC3340;
     --accent1: #EBA6A9;
     --accent2: #FFC6AC;
     --accent3: #C792EA;
@@ -18,6 +18,11 @@ body {
 
 html {
     margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: var(--main-bg-color)
 }
 
 table {
@@ -63,4 +68,34 @@ header {
     color: #a94442;
     background-color: #f2dede;
     border-color: #ebccd1;
+}
+
+.form-item {
+    display: block;
+}
+
+.btn {
+	padding: 5px 10px 5px 10px;
+	border-radius: 10px;
+	margin: 5px;
+}
+
+.btn-1 {
+	background-color: var(--accent1);
+}
+
+.btn-2 {
+	background-color: var(--accent2);
+}
+
+.btn-3 {
+	background-color: var(--accent3);
+}
+
+.btn-4 {
+	border: 1px solid var(--main-bg-color)
+}
+
+.btn:hover {
+	cursor: pointer;
 }

@@ -23,4 +23,14 @@ defmodule SeaQuail.Accounts.Connection do
     |> cast(attrs, @valid_fields)
     |> validate_required(@required_fields)
   end
+
+  def as_json(connection) do
+    %{
+       hostname: connection.hostname,
+       database: connection.database,
+       username: connection.username,
+       password: connection.password,
+       port: connection.port
+     }
+  end
 end

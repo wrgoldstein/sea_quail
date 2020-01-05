@@ -1,4 +1,20 @@
+<script type="module">
+// This is how you'd replace the phoenix provided forms with a custom Svelte one
+// Leaving it for reference
+/*  import { ConnectionForm } from '<%= Routes.static_path(@conn, "/js/index.js") %>'
+
+  const form = new ConnectionForm({
+    target: document.querySelector('#App'),
+    props: {
+        data: <%= raw render(SeaQuailWeb.ConnectionView, "form.json", connection: @changeset.data) %>
+    }
+  })
+*/
+</script>
+
 <h2>Edit Connection</h2>
+<div id="App"></div>
+
 <div class="container">
     <%= render "form.html", Map.put(assigns, :action, Routes.connection_path(@conn, :update)) %>
 </div>

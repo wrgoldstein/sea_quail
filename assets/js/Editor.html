@@ -56,32 +56,6 @@
 	flex-grow: 1;
 }
 
-.btn {
-	padding: 5px 10px 5px 10px;
-	border-radius: 10px;
-	margin: 5px;
-}
-
-.btn-1 {
-	background-color: var(--accent1);
-}
-
-.btn-2 {
-	background-color: var(--accent2);
-}
-
-.btn-3 {
-	background-color: var(--accent3);
-}
-
-.btn-4 {
-	border: 1px solid var(--main-bg-color)
-}
-
-.btn:hover {
-	cursor: pointer;
-}
-
 .top-bar {
 	height: 36px;
 	display: inherit;
@@ -104,7 +78,7 @@
 		<div class="top-bar">
 			<a class="btn btn-4">?</a>
 			<a class="btn btn-4">Explore</a>
-			<a class="btn btn-4">Account</a>
+			<a class="btn btn-4" href="/account">Account</a>
 		</div>
 		{#if error}
 			<div class="alert alert-danger">

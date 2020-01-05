@@ -1,0 +1,7 @@
+{
+    database: "<%= @connection.database %>",
+    hostname: "<%= @connection.hostname %>",
+    username: "<%= @connection.username %>",
+    password: "<%= @connection.password %>",
+    port: "<%= @connection.port %>",
+}

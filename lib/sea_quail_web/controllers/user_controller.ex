@@ -28,8 +28,9 @@ defmodule SeaQuailWeb.UserController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
+  def account(conn, _params) do
+    # account details and connection details
+    user = Guardian.Plug.current_resource(conn)
     render(conn, "show.html", user: user)
   end
 
