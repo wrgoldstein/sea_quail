@@ -7,7 +7,7 @@ defmodule SeaQuailWeb.QueryController do
 
   def index(conn, _params) do
     maybe_user = Guardian.Plug.current_resource(conn)
-    queries = Content.list_queries()
+    queries = Content.list_queries(maybe_user)
     render(conn, "index.html", queries: queries)
   end
 
@@ -23,7 +23,6 @@ defmodule SeaQuailWeb.QueryController do
         conn
         |> put_flash(:info, "Query saved successfully.")
         |> redirect(to: Routes.query_path(conn, :show, query))
-
       {:error, %Ecto.Changeset{} = changeset} ->
         errors = [:name, :body]
           |> Enum.reduce(%{}, fn field, acc -> 

@@ -5,8 +5,7 @@ defmodule SeaQuail.Content.Query do
   schema "queries" do
     field :body, :string
     field :name, :string
-    field :user_id, :string
-
+    belongs_to(:user, SeaQuail.Accounts.User)
     timestamps()
   end
 
@@ -15,6 +14,5 @@ defmodule SeaQuail.Content.Query do
     query
     |> cast(attrs, [:name, :body, :user_id])
     |> validate_required([:name, :body, :user_id])
-    |> unique_constraint(:email)
   end
 end

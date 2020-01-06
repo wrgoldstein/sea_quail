@@ -15,8 +15,6 @@
     <tr>
       <td><%= query.name %></td>
       <td><%= query.body %></td>
-      <td><%= query.user_id %></td>
-
       <td>
         <span><%= link "Show", to: Routes.query_path(@conn, :show, query) %></span>
         <span><%= link "Edit", to: Routes.query_path(@conn, :edit, query) %></span>
@@ -27,4 +25,4 @@
   </tbody>
 </table>
 
-<span><%= link "New Query", to: Routes.query_path(@conn, :new) %></span>
+<span><%= link "Back", to: Routes.page_path(@conn, :index) %></span>

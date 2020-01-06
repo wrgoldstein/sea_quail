@@ -1,10 +1,23 @@
 <script>
     import Modal from "./Modal.html"
-    import key from "keymaster";
-
     export let close, body
 
-    let name, error
+    let name = ""
+    let error, input_name
+
+    // for key shortcuts
+	let key;
+	let keyCode;
+
+	function handleKeydown(event) {
+        // this is such a hack
+        console.log(event.key)
+		if (event.key == "Enter"){
+			submit()
+		} else if (event.key == "Escape"){
+            close()
+        }
+	}
 
     let fields = ["name", "body"]
 
@@ -21,21 +34,22 @@
         .then(resp => resp.json())
         .then(s => {
 			if ("error" in s){
-				error = s.error
+                error = s.error
+                input_name.focus()
 			} else {
                 error = undefined
                 close()
 			}
 		})
     }
-
-    key('return', submit)
 </script>
 <style>
     .ivory {
         color: ivory
     }
 </style>
+
+<svelte:window on:keydown={handleKeydown}/>
 <Modal close={close}>
     <h3 class="ivory">Save query:</h3>
     {#if error}
@@ -49,8 +63,7 @@
             </ul>
         </div>
     {/if}
-    <label class="ivory">Name</label>
-
-    <input bind:value={name}>
+    <label class="ivory">Name:</label>
+    <input bind:this={input_name} bind:value={name} autofocus placeholder="Enter a name">
     <a on:click={submit} class="btn btn-3">Save</a>
 </Modal>

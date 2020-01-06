@@ -17,8 +17,9 @@ defmodule SeaQuail.Content do
       [%Query{}, ...]
 
   """
-  def list_queries do
-    Repo.all(Query)
+  def list_queries(user) do
+    query = from(Query, where: [user_id: ^user.id])
+    Repo.all(query)
   end
 
   @doc """
