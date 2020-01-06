@@ -38,6 +38,11 @@
         }
     }
 
+    function forwardNotify(msg){
+        console.log("forward?")
+        dispatch('notify', msg.detail)
+    }
+
 </script>
 <style>
     .ivory {
@@ -46,7 +51,7 @@
 </style>
 
 <svelte:window on:keydown={handleKeydown}/>
-<Modal>
+<Modal on:notify={forwardNotify}>
     <h3 class="ivory">Save query:</h3>
     {#if error}
         <div class="alert alert-danger">

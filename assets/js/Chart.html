@@ -7,8 +7,7 @@ export let data
 let this_chart, canvas
 let type = 'bar' // default
 
-let height = "200px"
-let width = "400px"
+let height, width
 
 function setTypeBar(){
     type = 'bar'
@@ -35,6 +34,7 @@ export function config(data){
 }
 
 onMount(() => {
+    console.log(height, width)
     canvas.style.height = height
     canvas.style.width = width
     this_chart = render(data)
@@ -44,12 +44,11 @@ onMount(() => {
 <style>
 
 .chart-container {
-    position: relative;
+    
     margin: auto;
-    padding: 1vw;
     background-color: #fff;
-    height: 400px;
-    width: 800px;
+    width: 100%;
+    height: 100%;
 }
 
 .controls {
@@ -64,8 +63,4 @@ onMount(() => {
 
 <div class="chart-container">
     <canvas bind:this={canvas}></canvas>
-    <div class='controls'>
-        <!-- <button on:click={setTypeBar}>Bar</button>
-        <button on:click={setTypeLine}>Line</button> -->
-    </div>
 </div>

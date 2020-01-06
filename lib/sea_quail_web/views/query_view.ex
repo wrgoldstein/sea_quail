@@ -9,4 +9,16 @@ defmodule SeaQuailWeb.QueryView do
       "#{truncated}..."
     end
   end
+
+  def render("index.json", %{queries: queries}) do
+    %{data: render_many(queries, SeaQuailWeb.QueryView, "show.json")}
+  end
+
+  def render("show.json", %{query: query}) do
+    %{
+        id: query.id,
+        name: query.name,
+        body: truncate_body(query.body)
+    }
+  end
 end

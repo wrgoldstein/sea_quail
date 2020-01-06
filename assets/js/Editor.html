@@ -13,8 +13,6 @@
     let table_key = 0
 	let chart
 
-	let editor_width;
-
 	let open_modal = undefined
 
 	function handleNotify(message, content){
@@ -22,7 +20,6 @@
 	}
 
 	function toggleSaveModal(){
-		console.log(editor_width)
 		open_modal = "save"
 	}
 
@@ -76,8 +73,7 @@
 }
 
 .chart-container {
-	display: ruby;
-	max-width: 40vw;
+	display: flex;
 }
 
 .table-sm {
@@ -91,7 +87,7 @@
 .left-half {
 	background-color:var(--main-bg-color);
 	flex-grow: 1;
-	max-width: 70vw;
+	max-width: 60vw;
 }
 
 .half {
@@ -100,9 +96,16 @@
 	flex-grow: 1;
 }
 
+.right-half {
+	display: flex;
+	flex-direction: column;
+}
+
 .top-bar {
+	display: flex;
+	justify-content: right;
+	width: 100%;
 	height: 2em;
-	display: inherit;
 	align-items: center;
     float: right;
 	flex: 0 0 auto;
@@ -112,7 +115,7 @@
 
 <div class="container">
 	<ModalManager on:notify={handleNotify} bind:modal={open_modal} text={text}/>
-	<div class="half left-half" bind:offsetWidth={editor_width}>
+	<div class="half left-half">
 		<div class="top-bar">
 			<a class="btn btn-2" on:click={run_query}>Format</a>
             <a class="btn btn-3" on:click={run_query}>Execute</a>
@@ -120,7 +123,7 @@
 		</div>
 		<Codemirror value={text} on_change={on_change} submit_f={run_query} save_f={toggleSaveModal}/>
 	</div>
-	<div class="half">
+	<div class="half right-half">
 		<div class="top-bar">
 			<a class="btn btn-4" on:click={toggleSearchModal}>Search</a>
 			<a class="btn btn-4">Explore</a>
@@ -135,7 +138,7 @@
 		{#if chart_data}
 			{#each [chart_key] as k (k)}
 				<div class="chart-container">
-					<Chart bind:this={chart} data={chart_data} width="80%" height="40%"/>
+					<Chart bind:this={chart} data={chart_data}/>
 				</div>
 			{/each}
 		{/if}

@@ -4,6 +4,7 @@
     const dispatch = createEventDispatcher();
 
     function dispatchClose(){
+        console.log('dispatch')
         dispatch('notify', 'close')
     }
 </script>
@@ -50,11 +51,11 @@
 
 <div class="modal-bg">
     <div class="modal-fg">
-        <a class="close" on:click={dispatchClose}>✕</a>
         <div class="modal-inside">
             <slot>
                 Empty modal
             </slot>
         </div>
+        <a class="close" on:click={dispatchClose}>✕</a>
     </div>
 </div>

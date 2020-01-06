@@ -8,7 +8,7 @@ defmodule SeaQuailWeb.QueryController do
   def index(conn, _params) do
     maybe_user = Guardian.Plug.current_resource(conn)
     queries = Content.list_queries(maybe_user)
-    render(conn, "index.html", queries: queries, layout: {SeaQuailWeb.LayoutView, "raw.html"})
+    render(conn, "index.json", queries: queries)
   end
 
   def new(conn, _params) do
@@ -37,7 +37,7 @@ defmodule SeaQuailWeb.QueryController do
 
   def show(conn, %{"id" => id}) do
     query = Content.get_query!(id)
-    render(conn, "show.html", query: query)
+    render(conn, "show.json", query: query)
   end
 
   def edit(conn, %{"id" => id}) do
