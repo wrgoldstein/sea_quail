@@ -1,23 +1,12 @@
 <script>
     import Modal from "./Modal.html"
-    export let close, body
+    import { createEventDispatcher } from 'svelte';
 
+    const dispatch = createEventDispatcher();
+
+    export let body
     let name = ""
     let error, input_name
-
-    // for key shortcuts
-	let key;
-	let keyCode;
-
-	function handleKeydown(event) {
-        // this is such a hack
-        console.log(event.key)
-		if (event.key == "Enter"){
-			submit()
-		} else if (event.key == "Escape"){
-            close()
-        }
-	}
 
     let fields = ["name", "body"]
 
@@ -38,10 +27,17 @@
                 input_name.focus()
 			} else {
                 error = undefined
-                close()
+                dispatch('notify', 'close')
 			}
 		})
     }
+
+    function handleKeydown(event){
+        if (event.key == "Enter"){
+            submit()
+        }
+    }
+
 </script>
 <style>
     .ivory {
@@ -50,7 +46,7 @@
 </style>
 
 <svelte:window on:keydown={handleKeydown}/>
-<Modal close={close}>
+<Modal>
     <h3 class="ivory">Save query:</h3>
     {#if error}
         <div class="alert alert-danger">

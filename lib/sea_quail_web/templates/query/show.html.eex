@@ -1,23 +1,18 @@
-<h1>Show Query</h1>
+<%# @query %>
 
-<ul>
+<script type="module">
+  import { App }from '<%= Routes.static_path(@conn, "/js/index.js") %>'
 
-  <li>
-    <strong>Name:</strong>
-    <%= @query.name %>
-  </li>
+  const app = new App({
+    target: document.querySelector('#App'),
+    props: {
+        authenticated: <%= authenticated?(@conn, []) %>,
+        user_email: "<%= (current_resource(@conn) || %{email: nil}).email %>",
+        text: "<%= @query.body %>"
+    }
+  })
+  // TODO fix this
+  window.csrfToken = '<%= Plug.CSRFProtection.get_csrf_token() %>'
+</script> 
 
-  <li>
-    <strong>Body:</strong>
-    <%= @query.body %>
-  </li>
-
-  <li>
-    <strong>User:</strong>
-    <%= @query.user_id %>
-  </li>
-
-</ul>
-
-<span><%= link "Edit", to: Routes.query_path(@conn, :edit, @query) %></span>
-<span><%= link "Back", to: Routes.query_path(@conn, :index) %></span>
+<div id="App"></div>

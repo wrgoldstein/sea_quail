@@ -1,0 +1,27 @@
+<script>
+    import Modal from "./Modal.html"
+    import { onMount } from 'svelte';
+
+	onMount(() => {
+		fetch("/queries")
+            .then(resp => resp.text())
+            .then(text => queries = text)
+	})
+
+    function handleKeydown(event){
+        if (event.key == "Enter"){
+            submit()
+        }
+    }
+
+    function submit(){
+        console.log("would submit")
+    }
+
+    let queries
+</script>
+
+<svelte:window on:keydown={handleKeydown}/>
+<Modal>
+    {@html queries}
+</Modal>

@@ -3,20 +3,31 @@
 	import Chart from "./Chart.html"
 	import { chartData } from "./chartConfig.js"
 	import Table from "./Table.html"
-	import SaveQueryModal from "./SaveQueryModal.html"
-	import key from "keymaster";
+	import ModalManager from "./ModalManager.html"
 
-	export let authenticated, user_email
+	export let authenticated, user_email, text
 
-	let text, result, data, error, chart_data
+	let result, data, error, chart_data
 	let loading = false
     let chart_key = 0
     let table_key = 0
 	let chart
-	
-	let save_modal_open
+
+	let editor_width;
+
+	let open_modal = undefined
+
+	function handleNotify(message, content){
+		console.log(message, content)
+	}
+
 	function toggleSaveModal(){
-		save_modal_open = !save_modal_open
+		console.log(editor_width)
+		open_modal = "save"
+	}
+
+	function toggleSearchModal(){
+		open_modal = "search"
 	}
 
 	function run_query(){
@@ -48,22 +59,25 @@
 	function on_change(cm){
 		text = cm.getValue()
 	}
-
-	key("escape", () => {
-		// TODO fix this
-		if (save_modal_open) toggleSaveModal()
-	})
 </script>
 
 <style>
 .container {
 	display: flex;
+	top: 0;
+	position: fixed;
+	width: 100%;
 }
 
 .table-container {
 	max-width: 50vw;
 	overflow-y: scroll;
 	overflow-x: scroll;
+}
+
+.chart-container {
+	display: ruby;
+	max-width: 40vw;
 }
 
 .table-sm {
@@ -77,6 +91,7 @@
 .left-half {
 	background-color:var(--main-bg-color);
 	flex-grow: 1;
+	max-width: 70vw;
 }
 
 .half {
@@ -86,7 +101,7 @@
 }
 
 .top-bar {
-	height: 36px;
+	height: 2em;
 	display: inherit;
 	align-items: center;
     float: right;
@@ -96,19 +111,18 @@
 </style>
 
 <div class="container">
-	<div class="half left-half">
+	<ModalManager on:notify={handleNotify} bind:modal={open_modal} text={text}/>
+	<div class="half left-half" bind:offsetWidth={editor_width}>
 		<div class="top-bar">
-			{#if save_modal_open}
-				<SaveQueryModal close={toggleSaveModal} body={text}/>
-			{/if}
 			<a class="btn btn-2" on:click={run_query}>Format</a>
             <a class="btn btn-3" on:click={run_query}>Execute</a>
             <a class="btn btn-1" on:click={toggleSaveModal}>Save</a>
 		</div>
-		<Codemirror on_change={on_change} submit_f={run_query} save_f={toggleSaveModal}/>
+		<Codemirror value={text} on_change={on_change} submit_f={run_query} save_f={toggleSaveModal}/>
 	</div>
 	<div class="half">
 		<div class="top-bar">
+			<a class="btn btn-4" on:click={toggleSearchModal}>Search</a>
 			<a class="btn btn-4">Explore</a>
 			<a class="btn btn-4" href="/account">Account</a>
 			<a class="btn btn-4">?</a>

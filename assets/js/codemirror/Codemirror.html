@@ -11,7 +11,7 @@
     
     import { onMount } from 'svelte'
     
-    export let mode, on_change, submit_f, save_f
+    export let mode, on_change, submit_f, save_f, value
     let textarea, editor
 
     export function formatSQL(){
@@ -37,6 +37,7 @@
             }
         }
         editor.addKeyMap(map);
+        editor.setValue(value);
     });
     
 </script>

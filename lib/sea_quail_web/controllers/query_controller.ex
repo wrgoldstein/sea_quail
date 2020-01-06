@@ -8,7 +8,7 @@ defmodule SeaQuailWeb.QueryController do
   def index(conn, _params) do
     maybe_user = Guardian.Plug.current_resource(conn)
     queries = Content.list_queries(maybe_user)
-    render(conn, "index.html", queries: queries)
+    render(conn, "index.html", queries: queries, layout: {SeaQuailWeb.LayoutView, "raw.html"})
   end
 
   def new(conn, _params) do
@@ -19,10 +19,10 @@ defmodule SeaQuailWeb.QueryController do
   def create(conn, query_params) do
     maybe_user = Guardian.Plug.current_resource(conn)
     case Content.create_query(Map.put(query_params, "user_id", maybe_user.id)) do
-      {:ok, query} ->
+      {:ok, _query} ->
         conn
-        |> put_flash(:info, "Query saved successfully.")
-        |> redirect(to: Routes.query_path(conn, :show, query))
+        |> put_status(200)
+        |> json(%{})
       {:error, %Ecto.Changeset{} = changeset} ->
         errors = [:name, :body]
           |> Enum.reduce(%{}, fn field, acc -> 

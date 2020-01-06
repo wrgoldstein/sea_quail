@@ -1,9 +1,11 @@
 <script>
-    import key from "keymaster";
-    
-    export let close
+    import { createEventDispatcher } from 'svelte';
 
-    key('escape', close)
+    const dispatch = createEventDispatcher();
+
+    function dispatchClose(){
+        dispatch('notify', 'close')
+    }
 </script>
 <style>
 
@@ -29,24 +31,26 @@
     }
     .modal-fg {
         z-index: 999;
-        left: 15vw;
-        top: 15vh;
-        width: 70vw;
-        height: 70vh;
-        position: absolute;
+        left: 10vw;
+        top: 10vh;
+        width: 80vw;
+        height: 80vh;
+        position: relative;
         background-color: var(--main-bg-color);
         border-radius: 20px;
     }
 
     .modal-inside {
-        direction: ltr;
-        display: relative;
+        position: absolute;
+        height: calc(100% - 6em);
         padding: 3em;
+        overflow: auto;
     }
 </style>
+
 <div class="modal-bg">
     <div class="modal-fg">
-        <a class="close" on:click={close}>✕</a>
+        <a class="close" on:click={dispatchClose}>✕</a>
         <div class="modal-inside">
             <slot>
                 Empty modal

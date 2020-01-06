@@ -1,0 +1,40 @@
+<script>
+    import SaveQueryModal from "./SaveQueryModal.html"
+    import SearchModal from "./SearchModal.html"
+	import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
+    
+    export let modal, text
+
+    function dispatchSave(){
+        dispatch('notify', 'save')
+    }
+
+	let key;
+	let keyCode;
+
+	function handleKeydown(event) {
+		if (event.key == "Enter"){
+            // submit()
+            if (modal == "save"){
+                console.log("dispatch save")
+            }
+		} else if (event.key == "Escape"){
+            modal = undefined
+        }
+    }
+    
+    function handleNotify(msg){
+        if (msg.detail == "close"){
+            modal = undefined
+        }
+    }
+</script>
+
+<svelte:window on:keydown={handleKeydown}/>
+{#if modal == "save" }
+    <SaveQueryModal on:notify={handleNotify} body={text}/>
+{:else if modal == "search"}
+    <SearchModal/>
+{/if}

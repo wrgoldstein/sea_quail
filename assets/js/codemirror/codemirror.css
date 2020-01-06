@@ -1,6 +1,8 @@
 .CodeMirror {
     height: 95% !important;
+    width: 95%;
     min-width: 700px;
+    overflow: scroll;
 }
 
 .CodeMirror-scroll {

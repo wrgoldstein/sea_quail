@@ -1,4 +1,8 @@
-<h1>Listing Queries</h1>
+<style>
+  th, td {
+    background-color: ivory;
+  }
+</style>
 
 <table>
   <thead>
@@ -6,15 +10,13 @@
       <th>Name</th>
       <th>Body</th>
       <th>User</th>
-
-      <th></th>
     </tr>
   </thead>
   <tbody>
 <%= for query <- @queries do %>
     <tr>
       <td><%= query.name %></td>
-      <td><%= query.body %></td>
+      <td><%= truncate_body(query.body) %></td>
       <td>
         <span><%= link "Show", to: Routes.query_path(@conn, :show, query) %></span>
         <span><%= link "Edit", to: Routes.query_path(@conn, :edit, query) %></span>
@@ -24,5 +26,3 @@
 <% end %>
   </tbody>
 </table>
-
-<span><%= link "Back", to: Routes.page_path(@conn, :index) %></span>
