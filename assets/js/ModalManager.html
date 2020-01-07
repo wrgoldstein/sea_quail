@@ -36,5 +36,5 @@
 {#if modal == "save" }
     <SaveQueryModal on:notify={handleNotify} body={text}/>
 {:else if modal == "search"}
-    <SearchModal/>
+    <SearchModal on:notify={handleNotify}/>
 {/if}

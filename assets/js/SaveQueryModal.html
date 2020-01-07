@@ -1,5 +1,4 @@
 <script>
-    import Modal from "./Modal.html"
     import { createEventDispatcher } from 'svelte';
 
     const dispatch = createEventDispatcher();
@@ -38,9 +37,8 @@
         }
     }
 
-    function forwardNotify(msg){
-        console.log("forward?")
-        dispatch('notify', msg.detail)
+    function dispatchClose(){
+        dispatch('notify', 'close')
     }
 
 </script>
@@ -48,23 +46,66 @@
     .ivory {
         color: ivory
     }
+
+    .close {
+        color: ivory;
+        top: 1em;
+        right: 2em;
+        position: absolute;
+    }
+
+    .close:hover {
+        cursor: pointer;
+    }
+
+    .modal-bg {
+        top: 0;
+        left: 0;
+        position: fixed;
+        z-index: 990;
+        height: 100vh;
+        width: 100vw;
+        background-color: #bbbbbbbb
+    }
+    .modal-fg {
+        z-index: 999;
+        left: 10vw;
+        top: 10vh;
+        width: 80vw;
+        height: 80vh;
+        position: relative;
+        background-color: var(--main-bg-color);
+        border-radius: 20px;
+    }
+
+    .modal-inside {
+        position: absolute;
+        height: calc(100% - 6em);
+        padding: 3em;
+        overflow: auto;
+    }
 </style>
 
 <svelte:window on:keydown={handleKeydown}/>
-<Modal on:notify={forwardNotify}>
-    <h3 class="ivory">Save query:</h3>
-    {#if error}
-        <div class="alert alert-danger">
-            <ul>
-                {#each fields as field}
-                    {#if error[field].length}
-                        <li> Query {field} {error[field].join(", ") }</li>
-                    {/if}
-                {/each}
-            </ul>
+<div class="modal-bg">
+    <div class="modal-fg">
+        <div class="modal-inside">
+            <h3 class="ivory">Save query:</h3>
+            {#if error}
+                <div class="alert alert-danger">
+                    <ul>
+                        {#each fields as field}
+                            {#if error[field].length}
+                                <li> Query {field} {error[field].join(", ") }</li>
+                            {/if}
+                        {/each}
+                    </ul>
+                </div>
+            {/if}
+            <label class="ivory">Name:</label>
+            <input bind:this={input_name} bind:value={name} autofocus placeholder="Enter a name">
+            <a on:click={submit} class="btn btn-3">Save</a>
         </div>
-    {/if}
-    <label class="ivory">Name:</label>
-    <input bind:this={input_name} bind:value={name} autofocus placeholder="Enter a name">
-    <a on:click={submit} class="btn btn-3">Save</a>
-</Modal>
+        <a class="close" on:click={dispatchClose}>✕</a>
+    </div>
+</div>

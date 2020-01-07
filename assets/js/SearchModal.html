@@ -1,7 +1,9 @@
 <script>
-    import Modal from "./Modal.html"
     import { onMount } from 'svelte';
+    import { createEventDispatcher } from 'svelte';
 
+    const dispatch = createEventDispatcher()
+    
 	onMount(() => {
 		fetch("/queries")
             .then(resp => resp.text())
@@ -14,14 +16,67 @@
         }
     }
 
+    function dispatchClose(){
+        dispatch('notify', 'close')
+    }
+
     function submit(){
         console.log("would submit")
     }
 
     let queries
 </script>
+<style>
+    .ivory {
+        color: ivory
+    }
+
+    .close {
+        color: ivory;
+        top: 1em;
+        right: 2em;
+        position: absolute;
+    }
+
+    .close:hover {
+        cursor: pointer;
+    }
+
+    .modal-bg {
+        top: 0;
+        left: 0;
+        position: fixed;
+        z-index: 990;
+        height: 100vh;
+        width: 100vw;
+        background-color: #bbbbbbbb
+    }
+    .modal-fg {
+        z-index: 999;
+        left: 10vw;
+        top: 10vh;
+        width: 80vw;
+        height: 80vh;
+        position: relative;
+        background-color: var(--main-bg-color);
+        border-radius: 20px;
+    }
+
+    .modal-inside {
+        position: absolute;
+        height: calc(100% - 6em);
+        padding: 3em;
+        overflow: auto;
+    }
+
+</style>
 
 <svelte:window on:keydown={handleKeydown}/>
-<Modal>
-    {@html queries}
-</Modal>
+<div class="modal-bg">
+    <div class="modal-fg">
+        <div class="modal-inside ivory">
+            
+        </div>
+        <a class="close" on:click={dispatchClose}>✕</a>
+    </div>
+</div>
