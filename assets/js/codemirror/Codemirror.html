@@ -31,8 +31,8 @@
         const map = { 
             "Ctrl-Enter": f.runQuery,
             "Ctrl-S": f.toggleSaveModal,
-            "Ctrl-E": f.toggleExploreModal,
-            "Ctrl-O": f.toggleOpenModal,
+            "Ctrl-E": f.toggleExplorerModal,
+            "Ctrl-O": f.toggleSearchModal,
             "Ctrl-R": (cm) => {
                 let val = cm.getValue()
                 cm.setValue(sqlFormatter.format(val))
