@@ -35,7 +35,12 @@
 		return false
 	}
 
-	function run_query(){
+	function toggleExplorerModal(){
+		open_modal = "explore"
+		return false
+	}
+
+	function runQuery(){
 		loading = true
 		fetch('/api/run', {
             method: 'POST',
@@ -67,6 +72,16 @@
 
 	key('⌘+s, ctrl+s', toggleSaveModal);
 	key('⌘+o, ctrl+o', toggleSearchModal);
+	key('⌘+o, ctrl+e', toggleExplorerModal);
+
+	// pass to codemirror
+	let f = {
+		runQuery,
+		toggleSaveModal,
+		toggleSearchModal,
+		toggleExplorerModal
+	}
+
 
 </script>
 
@@ -133,16 +148,16 @@
 	<ModalManager on:notify={handleNotify} bind:modal={open_modal} {query} {text}/>
 	<div class="half left-half">
 		<div class="top-bar">
-			<a class="btn btn-2 space-btn" on:click={run_query}>Format</a>
-            <a class="btn btn-3 space-btn" on:click={run_query}>Execute</a>
+			<a class="btn btn-2 space-btn" on:click={runQuery}>Format</a>
+            <a class="btn btn-3 space-btn" on:click={runQuery}>Execute</a>
             <a class="btn btn-1 space-btn" on:click={toggleSaveModal}>Save</a>
 		</div>
-		<Codemirror value={text} on_change={on_change} submit_f={run_query} save_f={toggleSaveModal}/>
+		<Codemirror value={text} on_change={on_change} {f}/>
 	</div>
 	<div class="half right-half">
 		<div class="top-bar">
 			<a class="btn btn-4 space-btn" on:click={toggleSearchModal}>Search</a>
-			<a class="btn btn-4 space-btn">Explore</a>
+			<a class="btn btn-4 space-btn"on:click={toggleExplorerModal}>Explore</a>
 			<a class="btn btn-4 space-btn" href="/account">Account</a>
 			<a class="btn btn-4 space-btn">?</a>
 		</div>

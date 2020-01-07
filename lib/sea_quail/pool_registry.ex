@@ -58,13 +58,13 @@ defmodule SeaQuail.Pool.Registry do
       try do
         with \
           {:ok, query} <- Postgrex.prepare(pool, "unnamed", sql, pool: ConnectionPool, timeout: 1500),
-          {:ok, result} <- Postgrex.execute(pool, query, [], pool: ConnectionPool)
+          {:ok, query, result} <- Postgrex.execute(pool, query, [], pool: ConnectionPool)
           do
-            %{ query: query, result: result}
+            { :ok, query, result }
           else
             err -> 
-              IO.puts("PoolRegistry Error running query")
               IO.inspect(err)
+              IO.puts("PoolRegistry Error running query")
           end
       rescue
         err -> {:down, err}

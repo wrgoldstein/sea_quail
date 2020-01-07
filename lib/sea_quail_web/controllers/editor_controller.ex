@@ -31,6 +31,47 @@ defmodule SeaQuailWeb.EditorController do
     not is_nil(capture) and not is_nil(capture["limit"]) and String.to_integer(capture["limit"]) <= 100
   end
 
+  def get_stats(conn, _params) do
+    #TODO move this to a separate module
+    user = current_resource(conn)
+
+    query1 = """
+      select
+        table_schema, table_name, column_name, data_type 
+      from information_schema.columns
+      where table_schema not in ('pg_catalog', 'information_schema')
+    """
+    {:ok, query, result1} = SeaQuail.Pool.Registry.query(user.id, query1)
+    where = result1.rows |> Enum.map(fn row -> 
+      "(tablename = '#{List.last(row)}' AND schemaname = '#{List.first(row)}')" 
+    end) |> Enum.join(" OR ")
+  
+    query2 = """
+    select 
+      schemaname,
+      tablename,
+      attname,
+      inherited,
+      null_frac,
+      avg_width,
+      n_distinct,
+      most_common_vals::text::varchar[],
+      most_common_freqs::text::varchar[],
+      histogram_bounds::text::varchar[]
+    from pg_stats
+    where #{where}
+    """
+  
+    # {:ok, query, result2} = SeaQuail.Pool.Registry.query(user.id, query2)
+
+    conn
+      |> put_status(200)
+      |> json(%{
+        columns: result1.columns,
+        rows: result1.rows
+      })
+  end
+
   def handle_query(conn, user, query) do
     case SeaQuail.Pool.Registry.query(user.id, query) do
       {:ok, query, result} ->

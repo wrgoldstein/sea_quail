@@ -1,0 +1,234 @@
+<script>
+    /*
+    Note pg_stat returns a histogram_bounds that give equally spaced marks for the data
+    You can use it to form histogram as follows (python for ease of demo):
+        
+        import pandas as pd
+        import numpy as np
+        import matplotlib.pyplot as plt
+
+        s = pd.Series(histogram_bounds)
+        plt.plot(s, 1/s.diff())
+
+    not that if there are extreme outliers this won't be a useful graph, so you'll want
+    the middle 90% or something.
+
+    TODO:
+    - don't load entire information schema, perform queries against it
+    - introduce summary stats and histograms
+    */
+    import _ from "lodash"
+    import { createEventDispatcher } from 'svelte';
+    import { onMount } from 'svelte';
+
+    const dispatch = createEventDispatcher()
+
+    let stats = false
+    let selection = stats.rows
+
+    let searchtext = ""
+
+
+    $: {
+        if (stats){
+            selection = stats.rows.filter(row => {
+                let a = row[0].includes(searchtext)
+                let b = row[1].includes(searchtext)
+                let c = row[2].includes(searchtext)
+                let d = row[3].includes(searchtext)
+                if (a || b || c || d){
+                    return true
+                }
+            })
+        }
+    }
+    
+	onMount(() => {
+		fetch("/api/stats")
+            .then(resp => resp.json())
+            .then(resp => {
+                console.log(resp)
+                stats = resp
+            })
+        // must handle errors
+	})
+
+    function handleKeydown(event){
+        if (event.key == "Enter"){
+            submit()
+        }
+    }
+
+    function dispatchClose(){
+        dispatch('notify', 'close')
+    }
+
+    function handleSearch(){
+
+    }
+
+</script>
+<style>
+
+    .topbar {
+        display: flex;
+        margin-bottom: 1em;
+    }
+
+    .ivory {
+        color: ivory
+    }
+
+    .close {
+        color: ivory;
+        top: 1em;
+        right: 2em;
+        position: absolute;
+    }
+
+    .close:hover {
+        cursor: pointer;
+    }
+
+    .reset {
+        color: ivory;
+        top: 1em;
+        right: 4em;
+        position: absolute;
+    }
+
+    .reset:hover {
+        cursor: pointer;
+    }
+
+    .modal-bg {
+        top: 0;
+        left: 0;
+        position: fixed;
+        z-index: 990;
+        height: 100vh;
+        width: 100vw;
+        background-color: #bbbbbbbb
+    }
+    .modal-fg {
+        z-index: 999;
+        left: 10vw;
+        top: 10vh;
+        width: 80vw;
+        height: 80vh;
+        position: relative;
+        background-color: var(--main-bg-color);
+        border-radius: 20px;
+    }
+
+    .modal-inside {
+        position: absolute;
+        height: calc(100% - 6em);
+        width: calc(100% - 6em);
+        padding: 3em;
+        overflow: auto;
+        font-size: 16px;
+    }
+    input {
+        font-size: 24px;
+        margin-left: 3em;
+    }
+
+    .switch-container {
+        margin: 1em 1em 1em 0;
+        display: flex;
+    }
+
+    .submit-btn {
+        margin-top: 3em;
+    }
+
+    .space-right {
+        margin-right: 2em;
+    }
+
+    .stats-container {
+        width: 100%;
+        display: flex;
+    }
+
+    .outer-item {
+        flex-grow: 1;
+        display: flex;
+     
+    }
+
+    .item {
+        padding: .5em;
+        display: flex;
+        flex-grow: 1;
+    }
+
+    .item:hover {
+        background-color: red;
+    }
+
+    .inner {
+        padding: 5px;
+        margin-right: 2em;
+    }
+
+    tr {
+        background-color: unset;
+    }
+
+    td {
+        border: none;
+    }
+
+    .character {
+        background-color: var(--accent1);
+        color: var(--main-bg-color);
+        padding: 5px;
+
+    }
+
+    .date {
+        background-color: var(--accent4);
+        color: var(--main-bg-color);
+        padding: 5px;
+    }
+
+    .double {
+        background-color: var(--accent3);
+        color: var(--main-bg-color);
+        padding: 5px;
+    }
+</style>
+
+<svelte:window on:keydown={handleKeydown}/>
+<div class="modal-bg">
+    <div class="modal-fg">
+        <div class="modal-inside ivory">
+            <div class="topbar">
+                <h3>Explore</h3>
+                <input bind:value={searchtext} autofocus>
+            </div>
+            {#if stats}
+                <table class="">
+                    <tr>
+                        <th>Schema</th>
+                        <th>Table</th>
+                        <th>Field</th>
+                        <th>Type</th>
+                    </tr>
+                    {#each selection as row}
+                        <tr>
+                            <td>{row[0]}</td>
+                            <td>{row[1]}</td>
+                            <td>{row[2]}</td>
+                            <td><div class="{row[3]} inner">{row[3]}</div></td>
+                        </tr>
+                    {/each}
+                </table>
+            {/if}
+        </div>
+        <a class="reset" >↺</a>
+        <a class="close" on:click={dispatchClose}>✕</a>
+    </div>
+</div>

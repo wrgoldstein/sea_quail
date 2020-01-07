@@ -11,7 +11,7 @@
     
     import { onMount } from 'svelte'
     
-    export let mode, on_change, submit_f, save_f, value
+    export let mode, on_change, f, value
     let textarea, editor
 
     export function formatSQL(){
@@ -29,8 +29,10 @@
 
         editor.on("change", on_change)
         const map = { 
-            "Ctrl-Enter": submit_f,
-            "Ctrl-S": save_f,
+            "Ctrl-Enter": f.runQuery,
+            "Ctrl-S": f.toggleSaveModal,
+            "Ctrl-E": f.toggleExploreModal,
+            "Ctrl-O": f.toggleOpenModal,
             "Ctrl-R": (cm) => {
                 let val = cm.getValue()
                 cm.setValue(sqlFormatter.format(val))

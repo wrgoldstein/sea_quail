@@ -1,6 +1,7 @@
 <script>
     import SaveQueryModal from "./SaveQueryModal.html"
     import SearchModal from "./SearchModal.html"
+    import ExplorerModal from "./ExplorerModal"
 	import { createEventDispatcher } from 'svelte';
 
     const dispatch = createEventDispatcher();
@@ -37,4 +38,6 @@
     <SaveQueryModal on:notify={handleNotify} body={text} {query}/>
 {:else if modal == "search"}
     <SearchModal on:notify={handleNotify}/>
+{:else if modal == "explore"}
+    <ExplorerModal on:notify={handleNotify}/>
 {/if}

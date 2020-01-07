@@ -7,13 +7,15 @@
 
     let name = query ? query.name : ""
     let error, input_name
-    let create_new_flag = false
+    let create_new_flag = !query
 
     let fields = ["name", "body"]
 
     function submit(){
-        console.log(create_new_flag)
-        if (query && create_new_flag){
+        if (!query){
+            create()
+        }
+        else if (create_new_flag){
             create()
         } else {
             updateQuery()
@@ -222,10 +224,12 @@
                 <label class="ivory">Name:</label>
                 <input bind:this={input_name} bind:value={name} autofocus placeholder="Enter a name">
                 <div class="switch-container">
-                    <div class="ivory space-right">Create new:</div>
-                    <label class="switch ivory">
-                        <div><input on:click={toggleNewCheck} type="checkbox"><span class="slider round"></span></div>
-                    </label>
+                    {#if query}
+                        <div class="ivory space-right">Create new:</div>
+                        <label class="switch ivory">
+                            <div><input on:click={toggleNewCheck} type="checkbox"><span class="slider round"></span></div>
+                        </label>
+                    {/if}
                 </div>
             </div>
             <div class="submit-btn">
