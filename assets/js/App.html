@@ -1,11 +1,11 @@
 <script>
 	import "../css/app.css"
 	import Editor from "./Editor.html"
-	export let authenticated, user_email, text
+	export let authenticated, user_email, query
 </script>
 
 {#if authenticated}
-	<Editor text={text}/>
+	<Editor {query}/>
 {:else}
 	<h1> you're out </h1>
 	<a class="btn btn-4" href="/login">Login</a>

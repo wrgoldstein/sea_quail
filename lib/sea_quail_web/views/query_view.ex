@@ -2,10 +2,10 @@ defmodule SeaQuailWeb.QueryView do
   use SeaQuailWeb, :view
 
   def truncate_body(body) do
-    if String.length(body) <= 30 do
+    if String.length(body) <= 60 do
       body
     else
-      truncated = Regex.run(~r/\A(.{0,30})(?:-|\Z)/, body) |> List.last()
+      truncated = String.slice(body, 0, 60)
       "#{truncated}..."
     end
   end
@@ -15,10 +15,14 @@ defmodule SeaQuailWeb.QueryView do
   end
 
   def render("show.json", %{query: query}) do
+    edit_path = SeaQuailWeb.Router.Helpers.query_path(SeaQuailWeb.Endpoint, :edit, query.id)
+    delete_path = SeaQuailWeb.Router.Helpers.query_path(SeaQuailWeb.Endpoint, :delete, query.id)
     %{
         id: query.id,
         name: query.name,
-        body: truncate_body(query.body)
+        body: truncate_body(query.body),
+        edit_path: edit_path,
+        delete_path: delete_path
     }
   end
 end

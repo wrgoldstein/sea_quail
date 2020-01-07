@@ -5,7 +5,7 @@
 
     const dispatch = createEventDispatcher();
     
-    export let modal, text
+    export let modal, query, text
 
     function dispatchSave(){
         dispatch('notify', 'save')
@@ -34,7 +34,7 @@
 
 <svelte:window on:keydown={handleKeydown}/>
 {#if modal == "save" }
-    <SaveQueryModal on:notify={handleNotify} body={text}/>
+    <SaveQueryModal on:notify={handleNotify} body={text} {query}/>
 {:else if modal == "search"}
     <SearchModal on:notify={handleNotify}/>
 {/if}

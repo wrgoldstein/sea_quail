@@ -52,11 +52,18 @@ defmodule SeaQuailWeb.QueryController do
     case Content.update_query(query, query_params) do
       {:ok, query} ->
         conn
-        |> put_flash(:info, "Query updated successfully.")
-        |> redirect(to: Routes.query_path(conn, :show, query))
+        |> put_status(200)
+        |> json(%{})
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", query: query, changeset: changeset)
+        errors = [:name, :body]
+          |> Enum.reduce(%{}, fn field, acc -> 
+            val = Keyword.get_values(changeset.errors, field) |> Enum.map(fn {error, _} -> error end)
+            Map.put(acc, field, val)
+          end)
+        conn
+          |> put_status(500)
+          |> json(%{error: errors})
     end
   end
 
@@ -65,7 +72,7 @@ defmodule SeaQuailWeb.QueryController do
     {:ok, _query} = Content.delete_query(query)
 
     conn
-    |> put_flash(:info, "Query deleted successfully.")
-    |> redirect(to: Routes.query_path(conn, :index))
+    |> put_status(200)
+    |> json(%{deleted: id})
   end
 end

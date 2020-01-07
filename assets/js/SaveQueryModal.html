@@ -3,13 +3,24 @@
 
     const dispatch = createEventDispatcher();
 
-    export let body
-    let name = ""
+    export let query, body
+
+    let name = query ? query.name : ""
     let error, input_name
+    let create_new_flag = false
 
     let fields = ["name", "body"]
 
     function submit(){
+        console.log(create_new_flag)
+        if (query && create_new_flag){
+            create()
+        } else {
+            updateQuery()
+        }
+    }
+
+    function create(){
 		return fetch('/queries', {
             method: 'POST',
             headers: {
@@ -31,6 +42,28 @@
 		})
     }
 
+    function updateQuery(){
+        fetch(`/queries/${query.id}`, {
+            method: 'PUT',
+            headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'x-csrf-token': window.csrfToken
+			},
+            body: JSON.stringify({id: query.id, query: { name, body }})
+        })
+        .then(resp => resp.json())
+        .then(s => {
+			if ("error" in s){
+                error = s.error
+                input_name.focus()
+			} else {
+                error = undefined
+                dispatch('notify', 'close')
+			}
+		})
+    }
+
     function handleKeydown(event){
         if (event.key == "Enter"){
             submit()
@@ -39,6 +72,10 @@
 
     function dispatchClose(){
         dispatch('notify', 'close')
+    }
+
+    function toggleNewCheck(){
+        create_new_flag = !create_new_flag
     }
 
 </script>
@@ -84,6 +121,85 @@
         padding: 3em;
         overflow: auto;
     }
+    input {
+        font-size: 24px;
+    }
+
+    .switch-container {
+        margin: 1em 1em 1em 0;
+        display: flex;
+    }
+
+    .submit-btn {
+        margin-top: 3em;
+    }
+
+    .space-right {
+        margin-right: 2em;
+    }
+
+     /* The switch - the box around the slider */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: var(--accent3);
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px var(--accent3);
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    } 
 </style>
 
 <svelte:window on:keydown={handleKeydown}/>
@@ -102,9 +218,20 @@
                     </ul>
                 </div>
             {/if}
-            <label class="ivory">Name:</label>
-            <input bind:this={input_name} bind:value={name} autofocus placeholder="Enter a name">
-            <a on:click={submit} class="btn btn-3">Save</a>
+            <div>
+                <label class="ivory">Name:</label>
+                <input bind:this={input_name} bind:value={name} autofocus placeholder="Enter a name">
+                <div class="switch-container">
+                    <div class="ivory space-right">Create new:</div>
+                    <label class="switch ivory">
+                        <div><input on:click={toggleNewCheck} type="checkbox"><span class="slider round"></span></div>
+                    </label>
+                </div>
+            </div>
+            <div class="submit-btn">
+                <a on:click={submit} class="btn btn-3">Save</a>
+            </div>
+            
         </div>
         <a class="close" on:click={dispatchClose}>✕</a>
     </div>

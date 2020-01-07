@@ -7,8 +7,8 @@
     target: document.querySelector('#App'),
     props: {
         authenticated: <%= authenticated?(@conn, []) %>,
-        user_email: "<%= (current_resource(@conn) || %{email: nil}).email %>",
-        text: "<%= @query.body %>"
+        query: <%= raw Jason.encode! render(SeaQuailWeb.QueryView, "show.json", query: @query) %>,
+        user_email: "<%= (current_resource(@conn) || %{email: nil}).email %>"
     }
   })
   // TODO fix this

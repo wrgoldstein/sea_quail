@@ -4,14 +4,20 @@
 	import { chartData } from "./chartConfig.js"
 	import Table from "./Table.html"
 	import ModalManager from "./ModalManager.html"
+	import key from "keymaster"
 
-	export let authenticated, user_email, text
+	export let authenticated, user_email, query
 
 	let result, data, error, chart_data
 	let loading = false
     let chart_key = 0
     let table_key = 0
-	let chart
+	let chart, text, id
+
+	if (query) {
+		id = query.id
+		text = query.body
+	}
 
 	let open_modal = undefined
 
@@ -21,10 +27,12 @@
 
 	function toggleSaveModal(){
 		open_modal = "save"
+		return false
 	}
 
 	function toggleSearchModal(){
 		open_modal = "search"
+		return false
 	}
 
 	function run_query(){
@@ -56,9 +64,17 @@
 	function on_change(cm){
 		text = cm.getValue()
 	}
+
+	key('⌘+s, ctrl+s', toggleSaveModal);
+	key('⌘+o, ctrl+o', toggleSearchModal);
+
 </script>
 
 <style>
+
+.space-btn {
+	margin-left: 1em;
+}
 .container {
 	display: flex;
 	top: 0;
@@ -114,21 +130,21 @@
 </style>
 
 <div class="container">
-	<ModalManager on:notify={handleNotify} bind:modal={open_modal} text={text}/>
+	<ModalManager on:notify={handleNotify} bind:modal={open_modal} {query} {text}/>
 	<div class="half left-half">
 		<div class="top-bar">
-			<a class="btn btn-2" on:click={run_query}>Format</a>
-            <a class="btn btn-3" on:click={run_query}>Execute</a>
-            <a class="btn btn-1" on:click={toggleSaveModal}>Save</a>
+			<a class="btn btn-2 space-btn" on:click={run_query}>Format</a>
+            <a class="btn btn-3 space-btn" on:click={run_query}>Execute</a>
+            <a class="btn btn-1 space-btn" on:click={toggleSaveModal}>Save</a>
 		</div>
 		<Codemirror value={text} on_change={on_change} submit_f={run_query} save_f={toggleSaveModal}/>
 	</div>
 	<div class="half right-half">
 		<div class="top-bar">
-			<a class="btn btn-4" on:click={toggleSearchModal}>Search</a>
-			<a class="btn btn-4">Explore</a>
-			<a class="btn btn-4" href="/account">Account</a>
-			<a class="btn btn-4">?</a>
+			<a class="btn btn-4 space-btn" on:click={toggleSearchModal}>Search</a>
+			<a class="btn btn-4 space-btn">Explore</a>
+			<a class="btn btn-4 space-btn" href="/account">Account</a>
+			<a class="btn btn-4 space-btn">?</a>
 		</div>
 		{#if error}
 			<div class="alert alert-danger">
