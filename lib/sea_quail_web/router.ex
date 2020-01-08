@@ -57,6 +57,7 @@ defmodule SeaQuailWeb.Router do
   scope "/api", SeaQuailWeb do
     pipe_through(:api)
     post("/run", EditorController, :run)
-    get("/stats", EditorController, :get_stats)
+    post("/stats", EditorController, :get_stats)
+    get("/tables", EditorController, :get_tables)
   end
 end

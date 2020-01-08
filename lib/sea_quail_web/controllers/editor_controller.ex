@@ -38,39 +38,35 @@ defmodule SeaQuailWeb.EditorController do
   def get_tables(conn, params) do
     user = current_resource(conn)
     search = params["search"]
-    query1 = """
+    query = """
       select
-        table_schema, table_name, column_name, data_type 
+        distinct table_schema, table_name
       from information_schema.columns
       where table_schema not in ('pg_catalog', 'information_schema')
-        and table_name
     """
-    {:ok, query, result1} = SeaQuail.Pool.Registry.query(user.id, query1)
-    where = result1.rows |> Enum.map(fn row -> 
-      "(tablename = '#{List.last(row)}' AND schemaname = '#{List.first(row)}')" 
-    end) |> Enum.join(" OR ")
-  
+    {:ok, _, result} = SeaQuail.Pool.Registry.query(user.id, query)
+    conn
+      |> put_status(200)
+      |> json(%{
+        columns: result.columns,
+        rows: result.rows
+      })
+
   end
 
-  def get_stats(conn, _params) do
-    #TODO move this to a separate module
+  def get_stats(conn, params) do
+    #TODO move this to a separate module    
     user = current_resource(conn)
-    query1 = """
-      select
-        table_schema, table_name, column_name, data_type 
-      from information_schema.columns
-      where table_schema not in ('pg_catalog', 'information_schema')
-    """
-    {:ok, query, result1} = SeaQuail.Pool.Registry.query(user.id, query1)
-    where = result1.rows |> Enum.map(fn row -> 
-      "(tablename = '#{List.last(row)}' AND schemaname = '#{List.first(row)}')" 
-    end) |> Enum.join(" OR ")
-
-    query2 = """
+    tablename = params["selection"]["table"]
+    schemaname = params["selection"]["schema"]
+    where = "(tablename = '#{tablename}' AND schemaname = '#{schemaname}')" 
+    SeaQuail.Pool.Registry.query(user.id, "analyze #{schemaname}.#{tablename};")
+    query = """
     select 
       schemaname,
       tablename,
       attname,
+      data_type,
       inherited,
       null_frac,
       avg_width,
@@ -78,17 +74,20 @@ defmodule SeaQuailWeb.EditorController do
       most_common_vals::text::varchar[],
       most_common_freqs::text::varchar[],
       histogram_bounds::text::varchar[]
-    from pg_stats
+    from pg_stats p
+      left join information_schema.columns c
+        on p.schemaname = c.table_schema
+        and p.tablename = c.table_name
+        and p.attname = c.column_name
     where #{where}
     """
-  
-    # {:ok, query, result2} = SeaQuail.Pool.Registry.query(user.id, query2)
+    {:ok, _query, result} = SeaQuail.Pool.Registry.query(user.id, query)
 
     conn
       |> put_status(200)
       |> json(%{
-        columns: result1.columns,
-        rows: result1.rows
+        columns: result.columns,
+        rows: result.rows
       })
   end
 

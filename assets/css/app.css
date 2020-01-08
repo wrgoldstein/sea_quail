@@ -29,8 +29,8 @@ a {
 
 table {
     border-collapse: collapse;
-    min-width: 30vw;
 }
+
 td, th {
     border: 1px solid #ddd;
     padding: 8px;

@@ -3,7 +3,7 @@ import Chart from "chart.js"
 import { onMount } from 'svelte'
 import { ChartConfig } from "./chartConfig.js"
 
-export let data
+export let data, options
 let this_chart, canvas
 let type = 'bar' // default
 
@@ -30,11 +30,10 @@ export function updateChart(new_data){
 }
 
 export function config(data){
-    return new ChartConfig(data).config(type)
+    return new ChartConfig(data, options).config(type)
 }
 
 onMount(() => {
-    console.log(height, width)
     canvas.style.height = height
     canvas.style.width = width
     this_chart = render(data)

@@ -20,28 +20,47 @@
     import _ from "lodash"
     import { createEventDispatcher } from 'svelte';
     import { onMount } from 'svelte';
+    import Chart from "./Chart.html"
+    import { chartData } from "./chartConfig.js"
+    import moment from "moment"
+    window.moment = moment
+    window._ = _
 
     const dispatch = createEventDispatcher()
 
     let stats = false
-    let selection = stats.rows
-
+    let chart_key = 0
+    let schemas, tables, fields, chart, chart_data
+    let selection = {}
+    let filteredTables
+    let filteredSchemas, filteredFields
     let searchSchema = ""
     let searchTable = ""
     let searchField = ""
 
+    let chartOptions = {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    display: false
+                }
+            }]
+        }
+    }
 
     $: {
-        if (stats){
-            selection = stats.rows.filter(row => {
-                let a = row[0].includes(searchtext)
-                let b = row[1].includes(searchtext)
-                let c = row[2].includes(searchtext)
-                let d = row[3].includes(searchtext)
-                if (a || b || c || d){
-                    return true
-                }
-            })
+        if (schemas){
+            filteredSchemas = schemas.filter(s => s.includes(searchSchema))
+            let t = selection.schema || ""
+            filteredTables = tables.filter(r => r[0].includes(t) && r[1].includes(searchTable))
+            if (!filteredTables.map(t => t[1]).includes(selection.table)){
+                selection.table = filteredTables[0][1]
+                fetchFields()
+            }
+        }
+
+        if (fields){
+            filteredFields = fields.filter(f => f[2].includes(searchField))
         }
     }
     
@@ -49,15 +68,12 @@
         fetch("/api/tables")
             .then(resp => resp.json())
             .then(resp => {
-                tables = resp
+                schemas = _.uniq(resp.rows.map(r => r[0]))
+                tables = resp.rows
+                selection.schema = schemas[0]
+                selection.table = tables[0][1]
+                fetchFields()
             })
-
-		fetch("/api/stats")
-            .then(resp => resp.json())
-            .then(resp => {
-                stats = resp
-            })
-        // must handle errors
 	})
 
     function handleKeydown(event){
@@ -70,10 +86,105 @@
         dispatch('notify', 'close')
     }
 
-    function handleSearch(){
+    let fetchFields = _.debounce(() => {
+            if (!selection.schema || !selection.table){
+                // can't fetch without a table
+                return
+            }
+            fetch('/api/stats', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'x-csrf-token': window.csrfToken
+                },
+                body: JSON.stringify({ selection })
+            })
+            .then(resp => resp.json())
+            .then(resp => {
+                resp.rows.forEach(r => r.uid = Math.random()) // fix keying issue
+                fields = resp.rows
+            })
+        }, 200)
 
+    function selectTable(row){
+        return () => {
+            if (selection['table'] == row[1]) {
+                selection.table = undefined
+            }
+            else {
+                selection.table = row[1]
+                fetchFields()
+            }
+        }
     }
 
+    function selectSchema(row){
+        return () => {
+            if (selection.schema == row) {
+                selection.schema = undefined
+            }
+            else {
+                selection.schema = row
+                fetchFields()
+            }
+        }
+    }
+
+    function selectField(row){
+        return () => {
+            if (selection.field == row) {
+                selection.field = undefined
+            }
+            else {
+                selection.field = row
+                let data = convertData(row)
+                if (!data) {
+                    chart_data = undefined
+                    chart_key++
+                    return
+                }
+                chart_data = chartData({
+                    columns: ['Values', 'Frequency'],
+                    number_columns: ['Frequency'],
+                    non_number_columns: ['Values'],
+                    result_types: ['string', 'number'],
+                    rows: _.zip(...) // transpose
+                })
+                chart_key++
+            }
+        }
+    }
+
+
+    function convertData(row){  
+        let hist = row[10]
+        let labels, values
+        let re = /\d/
+        chartOptions.scales.xAxes = {}
+
+        if (!hist || !hist.every(v => re.test(v))){
+            if (!row[8]) return
+            labels = row[8].map(v => v.slice(0,15))
+            values = row[9]
+        }
+        else if  (hist.every(v => !isNaN(v))){
+            labels = hist.map(v => +v)
+            values = Array.from(labels.keys()).map(i => 1/((labels[i+1] - labels[i]))).slice(0,-1)
+        } else if (hist.every(v => moment(v)._isValid)) {
+            labels = hist.map(v => new Date(v))
+            values = Array.from(labels.keys()).map(i => 1/((labels[i+1] - labels[i])/24/60/60/1000)).slice(0,-1)
+            labels = labels.map(t => t.toISOString().split('T')[0])
+            chartOptions.scales.xAxes = [{
+                type: 'time',
+                distribution: 'linear'
+            }]
+        } else {
+            labels = row[8].map(v => v.slice(0,15))
+            values = row[9].map(v => +v)
+        }
+        return [labels, values]
+    }
 </script>
 <style>
 
@@ -155,8 +266,9 @@
         margin-right: 2em;
     }
 
-    .stats-container {
+    .outer-container {
         width: 100%;
+        height: calc(100% - 6em);
         display: flex;
     }
 
@@ -177,8 +289,22 @@
     }
 
     .inner {
-        padding: 5px;
+        border-radius: 5px;
         margin-right: 2em;
+        text-align: center;
+        margin: auto;
+        cursor: pointer;
+    }
+
+    h4 {
+        margin: 0;
+        margin-bottom: 1em;
+    }
+
+    .chart-container {
+        padding: 1em;
+        background-color: white;
+        border-radius: 1em;
     }
 
     tr {
@@ -189,28 +315,45 @@
         border: none;
     }
 
+    .selected {
+        background-color: red;
+    }
+
     .character {
         background-color: var(--accent1);
         color: var(--main-bg-color);
-        padding: 5px;
 
     }
 
     .date {
         background-color: var(--accent4);
         color: var(--main-bg-color);
-        padding: 5px;
     }
 
     .double {
         background-color: var(--accent3);
         color: var(--main-bg-color);
-        padding: 5px;
     }
 
     .search {
         display: flex;
         margin-right: 3em;
+    }
+
+    .one-col {
+        width: 12.5%;
+    }
+
+    .two-col {
+        width: 30%;
+    }
+
+    .outer-chart-container {
+        width: calc(45% - 5em);
+        height: 100%;
+        padding: 1em;
+        border-radius: 10px;
+        margin-left: 3em;
     }
 </style>        
 
@@ -232,24 +375,52 @@
                     <input bind:value={searchField}>
                 </div>
             </div>
-            {#if stats}
-                <table class="">
+            <div class="outer-container">
+                <table class="one-col">
                     <tr>
                         <th>Schema</th>
-                        <th>Table</th>
-                        <th>Field</th>
-                        <th>Type</th>
                     </tr>
-                    {#each selection as row}
-                        <tr>
-                            <td>{row[0]}</td>
-                            <td>{row[1]}</td>
-                            <td>{row[2]}</td>
-                            <td><div class="{row[3]} inner">{row[3]}</div></td>
+                    {#each (filteredSchemas || []) as row}
+                        <tr class="{selection.schema == row ? 'selected': ''}">
+                            <td on:click={selectSchema(row)} class="item">{row}</td>
                         </tr>
                     {/each}
                 </table>
-            {/if}
+                <table class="one-col">
+                    <tr>
+                        <th>Table</th>
+                    </tr>
+                    {#each (filteredTables || []) as row}
+                        <tr class="{selection.table == row[1] ? 'selected': ''}">
+                            <td on:click={selectTable(row)} class="item">{row[1]}</td>
+                        </tr>
+                    {/each}
+                </table>
+                <table class="two-col">
+                    <tr>
+                        <th>Fields</th>
+                        <th>Types</th>
+                    </tr>
+                    {#each (filteredFields || []) as row (row.uid)}
+                        <tr>
+                            <td on:click={selectField(row)} class="item">{row[2]}</td>
+                            <td><div class="inner {row[3]}">{row[3]}</div></td>
+                        </tr>
+                    {/each}
+                </table>
+
+                {#if selection.field}
+                    {#each [chart_key] as k (k)}
+                    <div class="outer-chart-container">
+                    <h4>Distribution:</h4>
+                        <div class="chart-container">
+                            <Chart bind:this={chart} data={chart_data} options={chartOptions}/>
+                        </div>
+                        <h4 style="margin-top: 1em;">Percent null: {selection.field[5]}</h4>
+                    </div>
+                    {/each}
+                {/if}
+            </div>
         </div>
         <a class="reset" >↺</a>
         <a class="close" on:click={dispatchClose}>✕</a>

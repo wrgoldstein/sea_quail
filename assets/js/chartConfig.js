@@ -13,8 +13,9 @@ export function chartData(data){
 }
 
 export class ChartConfig {
-  constructor(data) {
+  constructor(data, options) {
     this.data = data;
+    this.options = options || {}
     this.colors = [
       '#e6194b',
       '#3cb44b',
@@ -51,9 +52,8 @@ export class ChartConfig {
         labels: this.makeLabels(),
         datasets: this.makeDatasets(type),
       },
-      options: this.makeOptions(type)
+      options: {...this.makeOptions(type), ...this.options}
     }
-    console.log(ret)
     return ret
   }
 
@@ -85,7 +85,7 @@ export class ChartConfig {
 
   makeOptions(type){
     let base = this.baseOptions()
-    if (this.data.result_types.indexOf('date') > 0) {
+    if (this.data.result_types.indexOf('date') >= 0) {
       return _.merge(base, this.timeSeriesOptions())
     }
     return base
