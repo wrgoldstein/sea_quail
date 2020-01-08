@@ -149,7 +149,7 @@
                     number_columns: ['Frequency'],
                     non_number_columns: ['Values'],
                     result_types: ['string', 'number'],
-                    rows: _.zip(...) // transpose
+                    rows: _.zip(...data) // transpose
                 })
                 chart_key++
             }
@@ -403,7 +403,7 @@
                     </tr>
                     {#each (filteredFields || []) as row (row.uid)}
                         <tr>
-                            <td on:click={selectField(row)} class="item">{row[2]}</td>
+                            <td on:click={selectField(row)} class="item {selection.field == row ? 'selected': ''}">{row[2]}</td>
                             <td><div class="inner {row[3]}">{row[3]}</div></td>
                         </tr>
                     {/each}
@@ -413,10 +413,13 @@
                     {#each [chart_key] as k (k)}
                     <div class="outer-chart-container">
                     <h4>Distribution:</h4>
-                        <div class="chart-container">
-                            <Chart bind:this={chart} data={chart_data} options={chartOptions}/>
-                        </div>
+                        {#if chart_data}
+                            <div class="chart-container">
+                                <Chart bind:this={chart} data={chart_data} options={chartOptions}/>
+                            </div>
+                        {/if}
                         <h4 style="margin-top: 1em;">Percent null: {selection.field[5]}</h4>
+                        <h4 style="margin-top: 1em;">Distinct values: {selection.field[7]}</h4>
                     </div>
                     {/each}
                 {/if}
