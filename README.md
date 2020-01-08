@@ -10,3 +10,10 @@
 ### Save queries and explore tables and columns in the database
 
 ![](demo2.gif)
+
+# Setup
+
+1. Clone the repo
+2. `mix deps.get`
+3. `cd assets && npm install && cd ..`
+4. `cp .env.example .env`
