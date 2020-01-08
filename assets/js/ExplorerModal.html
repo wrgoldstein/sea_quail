@@ -26,7 +26,9 @@
     let stats = false
     let selection = stats.rows
 
-    let searchtext = ""
+    let searchSchema = ""
+    let searchTable = ""
+    let searchField = ""
 
 
     $: {
@@ -44,10 +46,15 @@
     }
     
 	onMount(() => {
+        fetch("/api/tables")
+            .then(resp => resp.json())
+            .then(resp => {
+                tables = resp
+            })
+
 		fetch("/api/stats")
             .then(resp => resp.json())
             .then(resp => {
-                console.log(resp)
                 stats = resp
             })
         // must handle errors
@@ -72,6 +79,7 @@
 
     .topbar {
         display: flex;
+        height: 3em;
         margin-bottom: 1em;
     }
 
@@ -130,8 +138,8 @@
         font-size: 16px;
     }
     input {
-        font-size: 24px;
-        margin-left: 3em;
+        font-size: 1em;
+        margin-left: 1em;
     }
 
     .switch-container {
@@ -155,7 +163,7 @@
     .outer-item {
         flex-grow: 1;
         display: flex;
-     
+             
     }
 
     .item {
@@ -199,15 +207,30 @@
         color: var(--main-bg-color);
         padding: 5px;
     }
-</style>
+
+    .search {
+        display: flex;
+        margin-right: 3em;
+    }
+</style>        
 
 <svelte:window on:keydown={handleKeydown}/>
 <div class="modal-bg">
     <div class="modal-fg">
         <div class="modal-inside ivory">
             <div class="topbar">
-                <h3>Explore</h3>
-                <input bind:value={searchtext} autofocus>
+                <div class="search">
+                    <h3>Schema</h3>
+                    <input bind:value={searchSchema}>
+                </div>
+                <div class="search">
+                    <h3>Table</h3>
+                    <input bind:value={searchTable} autofocus>
+                </div>
+                <div class="search">
+                    <h3>Field</h3>
+                    <input bind:value={searchField}>
+                </div>
             </div>
             {#if stats}
                 <table class="">

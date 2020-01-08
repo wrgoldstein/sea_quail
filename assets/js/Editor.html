@@ -51,19 +51,28 @@
 			},
             body: JSON.stringify({ text })
         })
-        .then(resp => resp.json())
-        .then(s => {
-			if ("error" in s){
-				error = s.error
+		.then(resp => {
+			if (!resp.ok){
+				resp.text()
+					.then(_error => {
+						error = _error
+						data = undefined
+						chart_data = undefined
+					})
 			} else {
-				error = undefined
-				data = s
-				chart_data = chartData(s)
-                table_key++
-				chart_key++
+				return resp
 			}
 		})
+		.then(resp => resp.json())
+        .then(s => {
+			error = undefined
+			data = s
+			chart_data = chartData(s)
+			table_key++
+			chart_key++
+		})
 		.then( _ => loading = false)
+		.catch(err => console.log(err))
 	}
 
 	function on_change(cm){
@@ -86,6 +95,10 @@
 </script>
 
 <style>
+
+.alert {
+	width: 45vw;
+}
 
 .space-btn {
 	margin-left: 1em;
@@ -117,14 +130,13 @@
 
 .left-half {
 	background-color:var(--main-bg-color);
-	flex-grow: 1;
 	max-width: 60vw;
 }
 
 .half {
 	height: 100vh;
 	padding: 20px;
-	flex-grow: 1;
+	width: 50vw;
 }
 
 .right-half {

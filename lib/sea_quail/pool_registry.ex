@@ -63,8 +63,8 @@ defmodule SeaQuail.Pool.Registry do
             { :ok, query, result }
           else
             err -> 
-              IO.inspect(err)
               IO.puts("PoolRegistry Error running query")
+              {:down, err}
           end
       rescue
         err -> {:down, err}

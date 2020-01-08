@@ -16,25 +16,45 @@ defmodule SeaQuailWeb.EditorController do
     query = params["text"]
 
     # hack to ensure limit is included
-    
-    if check_limit(query) do
+    rows = check_limit(user, query)
+    if rows <= 500 do
       handle_query(conn, user, query)
     else
       conn
             |> put_status(500)
-            |> json(%{error: "Must include a LIMIT less than 100"})
+            |> json(%{error: "Query would return #{rows} rows, try adding a limit to bring it under 500"})
     end
   end
 
-  def check_limit(query) do
-    capture = Regex.named_captures(~r/limit([[:cntrl:], [:blank:]])+(?<limit>\d+)/im, query)
-    not is_nil(capture) and not is_nil(capture["limit"]) and String.to_integer(capture["limit"]) <= 100
+  def check_limit(user, query) do
+    case SeaQuail.Pool.Registry.query(user.id, "explain #{query}") do
+      {:ok, _, result} ->
+        [[head] | _] = result.rows
+        Regex.named_captures(~r/rows=(?<rows>\d+)/im, head)["rows"] |> String.to_integer
+      _ -> 1
+    end
+  end
+
+  def get_tables(conn, params) do
+    user = current_resource(conn)
+    search = params["search"]
+    query1 = """
+      select
+        table_schema, table_name, column_name, data_type 
+      from information_schema.columns
+      where table_schema not in ('pg_catalog', 'information_schema')
+        and table_name
+    """
+    {:ok, query, result1} = SeaQuail.Pool.Registry.query(user.id, query1)
+    where = result1.rows |> Enum.map(fn row -> 
+      "(tablename = '#{List.last(row)}' AND schemaname = '#{List.first(row)}')" 
+    end) |> Enum.join(" OR ")
+  
   end
 
   def get_stats(conn, _params) do
     #TODO move this to a separate module
     user = current_resource(conn)
-
     query1 = """
       select
         table_schema, table_name, column_name, data_type 
@@ -45,7 +65,7 @@ defmodule SeaQuailWeb.EditorController do
     where = result1.rows |> Enum.map(fn row -> 
       "(tablename = '#{List.last(row)}' AND schemaname = '#{List.first(row)}')" 
     end) |> Enum.join(" OR ")
-  
+
     query2 = """
     select 
       schemaname,
@@ -103,17 +123,17 @@ defmodule SeaQuailWeb.EditorController do
 
         json(conn, result)
 
-      {:down, error} ->
-        IO.inspect(error)
-        send_resp(conn, 500, "Database disconnected")
+      {:down, {:error, %Postgrex.Error{} = error}} ->
+          send_resp(conn, 500, error.postgres.message)
 
       {:error, %{postgres: error}} ->
-        conn
-        |> put_status(500)
-        |> json(%{error: error.message})
+        send_resp(conn, 500, error.message)
 
       {:error, %{message: message}} ->
         send_resp(conn, 500, message)
+
+      {:error, %Postgrex.Error{} = error} ->
+        send_resp(conn, 500, error.postgres.message)
     end
   end
 end
