@@ -50,7 +50,7 @@ defmodule SeaQuailWeb.QueryController do
     query = Content.get_query!(id)
 
     case Content.update_query(query, query_params) do
-      {:ok, query} ->
+      {:ok, _query} ->
         conn
         |> put_status(200)
         |> json(%{})

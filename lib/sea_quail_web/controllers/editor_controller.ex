@@ -35,9 +35,8 @@ defmodule SeaQuailWeb.EditorController do
     end
   end
 
-  def get_tables(conn, params) do
+  def get_tables(conn, _params) do
     user = current_resource(conn)
-    search = params["search"]
     query = """
       select
         distinct table_schema, table_name

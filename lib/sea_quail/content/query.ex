@@ -9,12 +9,6 @@ defmodule SeaQuail.Content.Query do
     timestamps()
   end
 
-  def as_map(query) do
-    %{
-
-    }
-  end
-
   @doc false
   def changeset(query, attrs) do
     query

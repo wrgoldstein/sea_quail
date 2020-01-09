@@ -36,16 +36,4 @@ defmodule SeaQuailWeb.ConnectionController do
         render(conn, "edit.html", user: user, changeset: changeset, existing: %{})
     end
   end
-
-  defp update(conn, %User{} = user, %Accounts.Connection{} = connection, params) do
-    case Accounts.update_connection(connection, user, Map.put(params, "user_id", user.id)) do
-      {:ok, _connection} ->
-        conn
-        |> put_flash(:info, "Connection updated successfully.")
-        |> redirect(to: Routes.connection_path(conn, :update))
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", user: user, changeset: changeset, existing: connection)
-    end
-  end
 end

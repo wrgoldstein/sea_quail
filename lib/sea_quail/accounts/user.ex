@@ -13,7 +13,6 @@ defmodule SeaQuail.Accounts.User do
     timestamps()
   end
 
-  @required_fields ~w(email crypted_password)a
   @doc false
   def changeset(user, attrs) do
     user

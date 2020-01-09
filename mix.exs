@@ -20,7 +20,7 @@ defmodule SeaQuail.MixProject do
   def application do
     [
       mod: {SeaQuail.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:ssl, :logger, :runtime_tools]
     ]
   end
 
