@@ -132,6 +132,12 @@ defmodule SeaQuailWeb.EditorController do
 
       {:error, %Postgrex.Error{} = error} ->
         send_resp(conn, 500, error.postgres.message)
+
+      {:error, _} ->
+        send_resp(conn, 500,  "unknown error")
+
+      {:down, _} ->
+        send_resp(conn, 500,  "unknown error")
     end
   end
 end
