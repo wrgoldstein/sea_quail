@@ -1,0 +1,22 @@
+<script>
+export let code
+let client_id = "b5fc72918ad01d21979f"// dont hardcore this
+import {onMount} from "svelte"
+
+onMount(() => {
+    if (code) {
+        fetch("https://github.com/login/oauth/access_token", {
+            method: 'POST',
+            body: JSON.stringify({ 
+                // client id
+             })
+        })
+    }
+})
+</script>
+
+{#if code}
+
+{:else}
+    <a href="https://github.com/login/oauth/authorize?client_id={client_id}"> Sign up with github </a>
+{/if}

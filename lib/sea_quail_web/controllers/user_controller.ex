@@ -5,6 +5,9 @@ defmodule SeaQuailWeb.UserController do
   alias SeaQuail.Accounts.User
   alias SeaQuailWeb.Guardian
 
+  @github_client_id System.get_env("GITHUB_CLIENT_ID")
+  @github_client_secret System.get_env("GITHUB_CLIENT_SECRET")
+
   def index(conn, _params) do
     users = Accounts.list_users()
     render(conn, "index.html", users: users)
@@ -33,7 +36,7 @@ defmodule SeaQuailWeb.UserController do
     user = Guardian.Plug.current_resource(conn)
     render(conn, "show.html", user: user)
   end
-
+  System.get_env("GITHUB_CLIENT_ID")
   def edit(conn, %{"id" => id}) do
     user = Accounts.get_user!(id)
     changeset = Accounts.change_user(user)
@@ -61,5 +64,31 @@ defmodule SeaQuailWeb.UserController do
     conn
     |> put_flash(:info, "User deleted successfully.")
     |> redirect(to: Routes.user_path(conn, :index))
+  end
+
+  def handle_webhook(conn, params) do
+    code = params["code"]
+    url = "https://github.com/login/oauth/access_token?client_id=#{@github_client_id}&client_secret=#{@github_client_secret}&code=#{code}"
+    {:ok, resp} = HTTPoison.post(url, Jason.encode!(%{}))
+    if resp.status_code == 200 do
+      [_, token | _] = String.split(resp.body, ~r/[=|&]/)
+
+      # TRYING TO DECIDE IF I SHOULD MAKE A USER WITH THIS TOKEN..
+      # IF SO, HOW DOES A USER LOG IN?
+
+      # ALTERNATIVELY, SIGN IN WITH AN EMAIL AND *CONNECT* A GITHUB,
+      # THEN ALLOW SAVING TO GITHUB IN THE OBVIOUS WAY. THIS SEEMS BETTER.
+
+      # SO TODO:
+      #   - MIGRATE USERS TO ADD GITHUB TOKEN
+      #   - FIGURE OUT HOW TO MODIFY A REPO (COMMIT, ADD, ETC)
+      #   - ASK USER TO ADD A REPO...? SO MORE THAN ONE USER CAN USE THE SAME ONE
+      #   - jeez theres actually a huge amount to do
+      #   - FIGURE OUT HOW TO add/commit/modify and make pull requests from elixir
+
+    end
+    conn
+      |> put_flash(:info, "Received webhook")
+      |> redirect(to: Routes.user_path(conn, :new))
   end
 end

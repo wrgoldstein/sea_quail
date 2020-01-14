@@ -2,3 +2,5 @@
 
 <%= render "form.html", Map.put(assigns, :action ,Routes.user_path(@conn, :create)) %>
 <span><%= link "Back", to: Routes.page_path(@conn, :index) %></span>
+
+<a href="https://github.com/login/oauth/authorize?client_id=b5fc72918ad01d21979f"> Sign up with github </a>

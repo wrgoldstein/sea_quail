@@ -41,6 +41,7 @@ defmodule SeaQuailWeb.Router do
     get("/", PageController, :index)
     get("/login", SessionController, :index)
     post("/login", SessionController, :login)
+    get("/webhook", UserController, :handle_webhook)
     delete("/logout", SessionController, :logout)
     resources("/users", UserController, except: [:index, :delete, :show])
   end

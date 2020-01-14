@@ -1,0 +1,12 @@
+diff --git a/assets/js/App.html b/assets/js/App.html
+index e016d5a..3d61e57 100644
+--- a/assets/js/App.html
++++ b/assets/js/App.html
+@@ -1,6 +1,7 @@
+ <script>
+ 	import "../css/app.css"
+ 	import Editor from "./Editor.html"
++	import Auth from "./Auth.html"
+ 	export let authenticated, user_email, query
+ </script>
+ 
